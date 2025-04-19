@@ -48,6 +48,12 @@
   <ItemGroup>
     <Compile Include="ByteConverter.cs" />
     <Compile Include="CoorConverter.cs" />
+    <Compile Include="CreateNewLayerForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CreateNewLayerForm.Designer.cs">
+      <DependentUpon>CreateNewLayerForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -62,6 +68,9 @@
     <Compile Include="MapRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="CreateNewLayerForm.resx">
+      <DependentUpon>CreateNewLayerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

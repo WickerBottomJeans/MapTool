@@ -96,7 +96,7 @@ namespace MapTool {
                 }
 
                 processed.Add(currentPoint);
-                Context.CurrentLayer.Data[currentPoint.Y, currentPoint.X] = fillByte;
+                Context.CurrentLayer.Data[currentPoint.Y, currentPoint.X] = 1;
 
                 byteQueue.Enqueue(new Point(currentPoint.X + 1, currentPoint.Y));
                 byteQueue.Enqueue(new Point(currentPoint.X - 1, currentPoint.Y));

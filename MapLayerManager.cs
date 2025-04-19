@@ -44,5 +44,13 @@ namespace MapTool {
         }
 
         public IEnumerable<MapLayer> GetAllLayers() => layersDict.Values;
+
+        public void AddLayer(string name, int width, int height) {
+            if (!string.IsNullOrWhiteSpace(name) && width > 0 && height > 0 && !layersDict.ContainsKey(name)) {
+                MapLayer newLayer = new MapLayer(name, height, width);
+                layersDict[name] = newLayer;
+                OnLayersDictChanged();
+            }
+        }
     }
 }

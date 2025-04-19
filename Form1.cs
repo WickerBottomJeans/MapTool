@@ -17,7 +17,6 @@ namespace MapTool {
     public enum ToolMode { None, Brush, Eraser, Fill, Line, Rect };
 
     public partial class mainForm : Form {
-        private bool TestGit;
         private MapLayerManager mapLayerManager;
         private MapRenderer mapRenderer;
         private MapEditor mapEditor;
@@ -391,6 +390,23 @@ namespace MapTool {
 
         private void btnReloadBitmap_Click(object sender, EventArgs e) {
             UpdatePanelMap();
+        }
+
+        private void btnCreateNewLayer_Click(object sender, EventArgs e) {
+            using (var inputForm = new CreateNewLayerForm()) // Assuming your new form class is named NewLayerInputForm
+            {
+                if (inputForm.ShowDialog() == DialogResult.OK) {
+                    string layerName = inputForm.LayerName;
+                    int width = inputForm.Width;
+                    int height = inputForm.Height;
+
+                    if (!string.IsNullOrWhiteSpace(layerName) && width > 0 && height > 0) {
+                        mapLayerManager.AddLayer(layerName, height, width);
+                    } else {
+                        MessageBox.Show("Invalid layer details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
+            }
         }
     }
 }
