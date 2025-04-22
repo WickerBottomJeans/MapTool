@@ -11,6 +11,7 @@ using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 namespace MapTool {
 
@@ -31,15 +32,23 @@ namespace MapTool {
 
         private bool isPanning = false;
 
-        //For previewing. i tried ==ToolMode but i didnt work out well
-        private bool isDrawing = false;
+        //For previewing.
+        private bool isDrawing = false; //Dùng cho cả Brush và Eraser
 
         private bool isDrawingLine = false;
         private bool isDrawingRect = false;
-        private bool isErasing = false;
+
+        //Background image
+        private Image backgroundImage = null;
+
+        private bool autoGeneratePosBGImage = false;
+        private int bgImageWidth;
+        private int bgImageHeight;
+        private Point bgImagePos;
 
         public mainForm() {
             InitializeComponent();
+
             typeof(Panel).InvokeMember("DoubleBuffered",
      System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
      null, panelMap, new object[] { true });
@@ -80,6 +89,7 @@ namespace MapTool {
 
         private void btnLoadFile_Click(object sender, EventArgs e) {
             List<MapLayer> mapLayerToAddToMapManager = new List<MapLayer>();
+
             if (openFileDialog1.ShowDialog() == DialogResult.OK) {
                 foreach (string filePath in openFileDialog1.FileNames) {
                     byte[] buffer = File.ReadAllBytes(filePath);
@@ -88,7 +98,6 @@ namespace MapTool {
 
                     MapLayer mapLayer = new MapLayer(Path.GetFileNameWithoutExtension(filePath), mapHeight, mapWidth);
                     mapLayer.Data.FromBytes(buffer);
-                    mapLayer.Rotate(90);
                     mapLayerToAddToMapManager.Add(mapLayer);
                 }
                 mapLayerManager.AddLayers(mapLayerToAddToMapManager);
@@ -128,34 +137,6 @@ namespace MapTool {
             }
         }
 
-        private void panelMap_Paint(object sender, PaintEventArgs e) {
-            var bmp = mapRenderer.GetBitmap();
-            if (bmp != null) {
-                e.Graphics.DrawImage(bmp, sharedContext.PanOffset);
-            }
-
-            if (isDrawingRect) {
-                Rectangle rect = new Rectangle(
-                    Math.Min(sharedContext.rectScreenStartPoint.X, sharedContext.rectScreenEndPoint.X),
-                    Math.Min(sharedContext.rectScreenStartPoint.Y, sharedContext.rectScreenEndPoint.Y),
-                    Math.Abs(sharedContext.rectScreenEndPoint.X - sharedContext.rectScreenStartPoint.X),
-                    Math.Abs(sharedContext.rectScreenEndPoint.Y - sharedContext.rectScreenStartPoint.Y)
-                );
-                using (Pen pen = new Pen(Color.Red, 2)) {
-                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                    e.Graphics.DrawRectangle(pen, rect);
-                }
-            }
-
-            if (isDrawingLine) {
-                using (Pen pen = new Pen(Color.Red, sharedContext.BrushSize * sharedContext.CellSize)) {
-                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                    e.Graphics.DrawLine(pen, sharedContext.lineScreenStart, sharedContext.lineScreenEnd);
-                }
-            }
-            Debug.WriteLine("Panel updated");
-        }
-
         private void clbLayers_ItemCheck(object sender, ItemCheckEventArgs e) {
             this.BeginInvoke((MethodInvoker)(() => {
                 UpdatePanelMap();
@@ -166,7 +147,7 @@ namespace MapTool {
             if (e.Button == MouseButtons.Middle) {
                 isPanning = true;
                 panningStartPoint = e.Location;
-                //panelMap.Capture = true;
+                panelMap.Capture = true;
                 return;
             }
             if (clbLayers.SelectedItems.Count <= 0) {
@@ -212,7 +193,6 @@ namespace MapTool {
                 panelMap.Invalidate();
             }
 
-            //BRUSH AND FANCY ERASER
             if (sharedContext.CurrentTool == ToolMode.Brush && isDrawing || sharedContext.CurrentTool == ToolMode.Eraser && isDrawing) {
                 mapEditor.DrawAt(coorConverter.ScreenToLogical(e.Location));
                 mapRenderer.RenderLayersAt(GetVisibleLayers(), e.Location);
@@ -220,7 +200,6 @@ namespace MapTool {
             }
 
             if (sharedContext.CurrentTool == ToolMode.Line && isDrawingLine) {
-                //To preview the line.
                 sharedContext.lineScreenEnd = e.Location;
                 panelMap.Invalidate();
             }
@@ -229,7 +208,7 @@ namespace MapTool {
         private void panelMap_MouseUp(object sender, MouseEventArgs e) {
             if (isPanning && e.Button == MouseButtons.Middle) {
                 isPanning = false;
-                //panelMap.Capture = false;
+                panelMap.Capture = false;
             }
             if (isDrawingRect) {
                 isDrawingRect = false;
@@ -247,7 +226,7 @@ namespace MapTool {
             if (isDrawingLine) {
                 isDrawingLine = false;
                 mapEditor.DrawLine();
-                panelMap.Invalidate();   //Để clear line preview.
+                panelMap.Invalidate();
                 UpdatePanelMap();
             }
         }
@@ -260,6 +239,17 @@ namespace MapTool {
             if (clbLayers.SelectedItem != null) {
                 sharedContext.CurrentLayer = mapLayerManager.GetLayer(clbLayers.SelectedItem.ToString());
             }
+            int index = clbLayers.SelectedIndex;
+            if (index == -1) return;
+
+            btnUp.Enabled = index > 0;
+            btnDown.Enabled = index >= 0 && index < clbLayers.Items.Count - 1;
+
+            bool hasSelection = clbLayers.SelectedItem != null;
+            btnSaveLayer.Enabled = hasSelection;
+            btnLoadBG.Enabled = hasSelection;
+            btnRemoveLayer.Enabled = hasSelection;
+            btnRotate.Enabled = hasSelection;
         }
 
         private void btnEraser_Click(object sender, EventArgs e) {
@@ -318,6 +308,12 @@ namespace MapTool {
             nudBrushSize.Value = defaultBrushSize;
             panelMap.BackColor = sharedContext.PanelBackColor;
             panelMap.MouseWheel += PanelMap_MouseWheel;
+            btnUp.Enabled = false;
+            btnDown.Enabled = false;
+            btnLoadBG.Enabled = false;
+            btnSaveLayer.Enabled = false;
+            btnRemoveLayer.Enabled = false;
+            btnRotate.Enabled = false;
         }
 
         private void label1_Click(object sender, EventArgs e) {
@@ -341,40 +337,26 @@ namespace MapTool {
             }
         }
 
-        //PROBLEM, PANNING IS WRONG!!!
         private void PanelMap_MouseWheel(object sender, MouseEventArgs e) {
             Point mousePosition = e.Location;
-            Point logicalMouseBeforeZoom = coorConverter.ScreenToLogical(mousePosition);
 
+            Point logicalBeforeZoom = coorConverter.ScreenToLogical(mousePosition);
             int previousCellSize = sharedContext.CellSize;
 
-            if (e.Delta > 0) { // Zoom in
-                if (sharedContext.CellSize < sharedContext.maxZoomInValue) {
-                    sharedContext.CellSize++;
-                }
-            } else if (e.Delta < 0) { // Zoom out
-                if (sharedContext.CellSize > 1) {
-                    sharedContext.CellSize--;
-                }
-            }
+            if (e.Delta > 0 && sharedContext.CellSize < sharedContext.maxZoomInValue)
+                sharedContext.CellSize++;
+            else if (e.Delta < 0 && sharedContext.CellSize > 1)
+                sharedContext.CellSize--;
 
             if (sharedContext.CellSize != previousCellSize) {
-                Point logicalMouseAfterZoom = coorConverter.ScreenToLogical(mousePosition);
+                Point screenAfterZoom = coorConverter.LogicalToScreen(logicalBeforeZoom);
 
-                // Calculate the logical pixel that should remain under the mouse
-                Point logicalAnchor = logicalMouseBeforeZoom;
+                int deltaX = mousePosition.X - screenAfterZoom.X;
+                int deltaY = mousePosition.Y - screenAfterZoom.Y;
 
-                // Convert the logical anchor back to screen coordinates with the new CellSize
-                Point screenAnchorAfterZoom = coorConverter.LogicalToScreen(logicalAnchor);
-
-                // Calculate the screen-space difference needed to keep the anchor at the mouse position
-                int deltaScreenX = mousePosition.X - screenAnchorAfterZoom.X;
-                int deltaScreenY = mousePosition.Y - screenAnchorAfterZoom.Y;
-
-                // Adjust the PanOffset by this screen-space difference
                 sharedContext.PanOffset = new Point(
-                    sharedContext.PanOffset.X + deltaScreenX,
-                    sharedContext.PanOffset.Y + deltaScreenY
+                    sharedContext.PanOffset.X + deltaX,
+                    sharedContext.PanOffset.Y + deltaY
                 );
 
                 UpdatePanelMap();
@@ -385,7 +367,90 @@ namespace MapTool {
             sharedContext.CurrentTool = ToolMode.Fill;
         }
 
+        private void panelMap_Paint(object sender, PaintEventArgs e) {
+            if (backgroundImage != null) {
+                int scaledBackgroundWidth = (bgImageWidth * sharedContext.CellSize);
+                int scaledBackgroundHeight = (bgImageHeight * sharedContext.CellSize);
+
+                int backgroundX;
+                int backgroundY;
+
+                if (autoGeneratePosBGImage) {
+                    backgroundX = sharedContext.PanOffset.X;
+                    backgroundY = sharedContext.PanOffset.Y + (GetVisibleLayers()[0].Data.GetLength(0) * sharedContext.CellSize) - scaledBackgroundHeight;
+                } else {
+                    backgroundX = sharedContext.PanOffset.X + (bgImagePos.X * sharedContext.CellSize);
+                    backgroundY = sharedContext.PanOffset.Y + (bgImagePos.Y * sharedContext.CellSize);
+                }
+
+                e.Graphics.DrawImage(backgroundImage,
+                                    backgroundX,
+                                    backgroundY,
+                                    scaledBackgroundWidth,
+                                    scaledBackgroundHeight);
+            }
+            var bmp = mapRenderer.GetBitmap();
+            if (bmp != null) {
+                e.Graphics.DrawImage(bmp, sharedContext.PanOffset);
+            }
+            if (isDrawingRect) {
+                Rectangle rect = new Rectangle(
+                    Math.Min(sharedContext.rectScreenStartPoint.X, sharedContext.rectScreenEndPoint.X),
+                    Math.Min(sharedContext.rectScreenStartPoint.Y, sharedContext.rectScreenEndPoint.Y),
+                    Math.Abs(sharedContext.rectScreenEndPoint.X - sharedContext.rectScreenStartPoint.X),
+                    Math.Abs(sharedContext.rectScreenEndPoint.Y - sharedContext.rectScreenStartPoint.Y)
+                );
+                using (Pen pen = new Pen(Color.Red, 2)) {
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawRectangle(pen, rect);
+                }
+            }
+
+            if (isDrawingLine) {
+                using (Pen pen = new Pen(Color.Red, sharedContext.BrushSize * sharedContext.CellSize)) {
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawLine(pen, sharedContext.lineScreenStart, sharedContext.lineScreenEnd);
+                }
+            }
+
+            Debug.WriteLine("Panel updated");
+        }
+
         private void btnLoadBG_Click(object sender, EventArgs e) {
+            OpenFileDialog openFileDialog = new OpenFileDialog {
+                Filter = "Image Files (*.bmp;*.jpg;*.jpeg;*.png;*.gif)|*.bmp;*.jpg;*.jpeg;*.png;*.gif|All files (*.*)|*.*",
+                Title = "Load Background Image"
+            };
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK) {
+                try {
+                    if (backgroundImage != null)
+                        backgroundImage.Dispose();
+
+                    using (var configForm = new ImageConfigForm()) {
+                        DialogResult result = configForm.ShowDialog();
+
+                        if (result == DialogResult.OK) {
+                            bgImageWidth = configForm.ImgWidth;
+                            bgImageHeight = configForm.ImgHeight;
+
+                            if (configForm.HasPosition) {
+                                bgImagePos = new Point(configForm.CoorX, configForm.CoorY);
+                                autoGeneratePosBGImage = false;
+                            } else {
+                                autoGeneratePosBGImage = true;
+                            }
+                        } else if (result == DialogResult.Cancel) {
+                            return;
+                        }
+                    }
+                    backgroundImage = Image.FromFile(openFileDialog.FileName);
+
+                    panelMap.Invalidate();
+                } catch (Exception ex) {
+                    MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
         }
 
         private void btnReloadBitmap_Click(object sender, EventArgs e) {
@@ -397,15 +462,40 @@ namespace MapTool {
             {
                 if (inputForm.ShowDialog() == DialogResult.OK) {
                     string layerName = inputForm.LayerName;
-                    int width = inputForm.Width;
-                    int height = inputForm.Height;
-
+                    int width = inputForm.LayerWidth;
+                    int height = inputForm.LayerHeight;
                     if (!string.IsNullOrWhiteSpace(layerName) && width > 0 && height > 0) {
                         mapLayerManager.AddLayer(layerName, height, width);
                     } else {
                         MessageBox.Show("Invalid layer details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
+            }
+        }
+
+        private void btnRotate_Click(object sender, EventArgs e) {
+            if (sharedContext.CurrentLayer != null) {
+                sharedContext.CurrentLayer.Rotate(90);
+                UpdatePanelMap();
+            }
+        }
+
+        private void btnSaveLayer_Click(object sender, EventArgs e) {
+            if (clbLayers.SelectedItem == null) {
+                MessageBox.Show("Select a layer to save.");
+                return;
+            }
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog {
+                Filter = "Text files (*.txt)|*.txt",
+                DefaultExt = "txt",
+                AddExtension = true,
+                FileName = sharedContext.CurrentLayer.Name + ".txt"
+            };
+            Byte[] buffer = sharedContext.CurrentLayer.Data.ToBytes();
+            if (saveFileDialog.ShowDialog() == DialogResult.OK) {
+                File.WriteAllBytes(saveFileDialog.FileName, buffer);
+                MessageBox.Show("Layer saved successfully.");
             }
         }
     }

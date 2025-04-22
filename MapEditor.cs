@@ -11,6 +11,7 @@ using System.Windows.Forms;
 
 namespace MapTool {
 
+    //Class này chỉ dùng để edit các MapLayer.Data[,]
     internal class MapEditor {
         private MapContext context;
 
@@ -43,8 +44,6 @@ namespace MapTool {
             }
         }
 
-        //Won't be using this in near time since why draw the line when u can just called RenderLayers after the
-        //Editor finishes its job at drawing the line into the Data[,]
         public void DrawLine() {
             Point lineLogicalStart = coorConverter.ScreenToLogical(Context.lineScreenStart);
             Point lineLogicalEnd = coorConverter.ScreenToLogical(Context.lineScreenEnd);
@@ -63,7 +62,6 @@ namespace MapTool {
             int x2 = Math.Max(rectStartLogical.X, rectEndLogical.X);
             int y2 = Math.Max(rectStartLogical.Y, rectEndLogical.Y);
 
-            // Pait to data and graphics
             for (int y = y1; y <= y2; y++) {
                 for (int x = x1; x <= x2; x++) {
                     if (Context.CurrentLayer.IsValidCoor(x, y)) {
@@ -73,7 +71,6 @@ namespace MapTool {
             }
         }
 
-        //THIS FLOODFILL DON'T TAKE COLOR INTO CONSIDERATION.
         public void FloodFill(List<MapLayer> visibleMapLayers, Point fillStartScreen) {
             if (visibleMapLayers.Count == 0) {
                 return;

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace MapTool {
 
+    // Lớp này dùng để chuyển đổi giữa các hệ tọa độ khác nhau:
+    // - Tọa độ logic (logical coor): Được sử dụng để đại diện cho các điểm dữ liệu trong bản đồ (MapLayer.Data[,]).
+    // - Tọa độ màn hình (screen coor): Được sử dụng để đại diện cho vị trí điểm ảnh tương đối với cửa sổ (ví dụ: từ sự kiện MouseDown).
+    // - Tọa độ Bitmap (bitmap coor): Được sử dụng để vẽ lên bitmap
     internal class CoorConverter {
         public MapContext Context { get; set; }
 

@@ -25,9 +25,7 @@ namespace MapTool {
             int originalWidth = Data.GetLength(1);
             int originalHeight = Data.GetLength(0);
 
-            // Normalize the degrees
-
-            byte[,] rotatedMap = Data; // Default to original
+            byte[,] rotatedMap = Data;
 
             if (degrees == 90) {
                 rotatedMap = new byte[originalWidth, originalHeight];
@@ -52,7 +50,7 @@ namespace MapTool {
                 }
             } else if (degrees != 0) {
                 MessageBox.Show($"Rotation by {degrees} degrees is not supported. Please enter 0, 90, 180, or 270.", "Invalid Rotation Angle", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return; // Return the original map if the angle is invalid
+                return;
             }
 
             Data = rotatedMap;
@@ -68,29 +66,24 @@ namespace MapTool {
             int originalHeight = Data.GetLength(0);
             byte[,] newData = new byte[newHeight, newWidth];
 
-            // Calculate the starting indices for copying from the original data
             int startY = originalHeight - newHeight;
-            int startX = 0; // Bottom-left means starting from the left (x=0)
+            int startX = 0;
 
-            // Calculate the ending indices for copying
             int endY = originalHeight;
             int endX = newWidth;
 
-            // Calculate the starting indices for the new data
             int newStartY = 0;
             int newStartX = 0;
 
-            // Iterate through the new data array and copy from the corresponding bottom-left section of the original
             for (int y = newStartY; y < newHeight; y++) {
                 for (int x = newStartX; x < newWidth; x++) {
                     int originalY = startY + y;
                     int originalX = startX + x;
 
-                    // Check if the original coordinates are within bounds
                     if (originalX >= 0 && originalX < originalWidth && originalY >= 0 && originalY < originalHeight) {
                         newData[y, x] = Data[originalY, originalX];
                     } else {
-                        newData[y, x] = 0; // Default value if out of bounds (shouldn't happen in this logic if new dimensions are valid)
+                        newData[y, x] = 0;
                     }
                 }
             }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MapTool {
+    //Class này dùng để vẽ lên bitmap của panelMap
 
     internal class MapRenderer {
         private MapContext context;
@@ -109,7 +110,8 @@ namespace MapTool {
             using (Graphics g = Graphics.FromImage(cachedBitmap)) {
                 // Clear the dirty area to black first
                 SolidBrush dirtyEraserBrush = new SolidBrush(Context.PanelBackColor);
-                g.FillRectangle(dirtyEraserBrush, dirtyScreenPoint.X, dirtyScreenPoint.Y, Context.BrushSize * Context.CellSize, Context.BrushSize * Context.CellSize);
+                Point dirtyBitmapPoint = coorConverter.ScreenToBitmap(dirtyScreenPoint);
+                g.FillRectangle(dirtyEraserBrush, dirtyBitmapPoint.X, dirtyBitmapPoint.Y, Context.BrushSize * Context.CellSize, Context.BrushSize * Context.CellSize);
 
                 var brushes = new Dictionary<string, SolidBrush>();
                 try {
@@ -125,8 +127,8 @@ namespace MapTool {
                                 int logicalX = dirtyLogicalPoint.X + brushX;
 
                                 if (layer.IsValidCoor(logicalX, logicalY) && layer.Data[logicalY, logicalX] == 1) {
-                                    int screenX = dirtyScreenPoint.X + brushX * Context.CellSize;
-                                    int screenY = dirtyScreenPoint.Y + brushY * Context.CellSize;
+                                    int screenX = dirtyBitmapPoint.X + brushX * Context.CellSize;
+                                    int screenY = dirtyBitmapPoint.Y + brushY * Context.CellSize;
                                     g.FillRectangle(brush, screenX, screenY, Context.CellSize, Context.CellSize);
                                 }
                             }
