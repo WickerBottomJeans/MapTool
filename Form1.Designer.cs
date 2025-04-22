@@ -36,32 +36,32 @@
             this.btnRemoveLayer = new System.Windows.Forms.Button();
             this.clbLayers = new System.Windows.Forms.CheckedListBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnBrush = new System.Windows.Forms.Button();
+            this.btnEraser = new System.Windows.Forms.Button();
             this.btnDrawRect = new System.Windows.Forms.Button();
             this.btnDrawLine = new System.Windows.Forms.Button();
             this.btnBucket = new System.Windows.Forms.Button();
             this.btnRotate = new System.Windows.Forms.Button();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnBrush = new System.Windows.Forms.Button();
-            this.btnEraser = new System.Windows.Forms.Button();
             this.btnReloadBitmap = new System.Windows.Forms.Button();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.btnZoomIn = new System.Windows.Forms.Button();
             this.btnZoomOut = new System.Windows.Forms.Button();
-            this.panelMap = new System.Windows.Forms.Panel();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.nudBrushSize = new System.Windows.Forms.NumericUpDown();
+            this.panelMap = new System.Windows.Forms.Panel();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel5.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBrushSize)).BeginInit();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // flowLayoutPanel1
@@ -221,6 +221,32 @@
             this.flowLayoutPanel2.Size = new System.Drawing.Size(276, 266);
             this.flowLayoutPanel2.TabIndex = 3;
             // 
+            // btnBrush
+            // 
+            this.btnBrush.AutoSize = true;
+            this.btnBrush.Image = ((System.Drawing.Image)(resources.GetObject("btnBrush.Image")));
+            this.btnBrush.Location = new System.Drawing.Point(3, 3);
+            this.btnBrush.Name = "btnBrush";
+            this.btnBrush.Size = new System.Drawing.Size(69, 65);
+            this.btnBrush.TabIndex = 0;
+            this.btnBrush.Text = "Brush";
+            this.btnBrush.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnBrush.UseVisualStyleBackColor = true;
+            this.btnBrush.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // btnEraser
+            // 
+            this.btnEraser.AutoSize = true;
+            this.btnEraser.Image = ((System.Drawing.Image)(resources.GetObject("btnEraser.Image")));
+            this.btnEraser.Location = new System.Drawing.Point(78, 3);
+            this.btnEraser.Name = "btnEraser";
+            this.btnEraser.Size = new System.Drawing.Size(69, 65);
+            this.btnEraser.TabIndex = 1;
+            this.btnEraser.Text = "Eraser";
+            this.btnEraser.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnEraser.UseVisualStyleBackColor = true;
+            this.btnEraser.Click += new System.EventHandler(this.btnEraser_Click);
+            // 
             // btnDrawRect
             // 
             this.btnDrawRect.AutoSize = true;
@@ -283,32 +309,6 @@
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
             this.flowLayoutPanel4.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel4.TabIndex = 5;
-            // 
-            // btnBrush
-            // 
-            this.btnBrush.AutoSize = true;
-            this.btnBrush.Image = ((System.Drawing.Image)(resources.GetObject("btnBrush.Image")));
-            this.btnBrush.Location = new System.Drawing.Point(3, 3);
-            this.btnBrush.Name = "btnBrush";
-            this.btnBrush.Size = new System.Drawing.Size(69, 65);
-            this.btnBrush.TabIndex = 0;
-            this.btnBrush.Text = "Brush";
-            this.btnBrush.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnBrush.UseVisualStyleBackColor = true;
-            this.btnBrush.Click += new System.EventHandler(this.btnBrush_Click);
-            // 
-            // btnEraser
-            // 
-            this.btnEraser.AutoSize = true;
-            this.btnEraser.Image = ((System.Drawing.Image)(resources.GetObject("btnEraser.Image")));
-            this.btnEraser.Location = new System.Drawing.Point(78, 3);
-            this.btnEraser.Name = "btnEraser";
-            this.btnEraser.Size = new System.Drawing.Size(69, 65);
-            this.btnEraser.TabIndex = 1;
-            this.btnEraser.Text = "Eraser";
-            this.btnEraser.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnEraser.UseVisualStyleBackColor = true;
-            this.btnEraser.Click += new System.EventHandler(this.btnEraser_Click);
             // 
             // btnReloadBitmap
             // 
@@ -374,6 +374,42 @@
             this.btnZoomOut.UseVisualStyleBackColor = true;
             this.btnZoomOut.Click += new System.EventHandler(this.btnZoomOut_Click);
             // 
+            // flowLayoutPanel5
+            // 
+            this.flowLayoutPanel5.AutoSize = true;
+            this.flowLayoutPanel5.Controls.Add(this.label2);
+            this.flowLayoutPanel5.Controls.Add(this.nudBrushSize);
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 221);
+            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
+            this.flowLayoutPanel5.Padding = new System.Windows.Forms.Padding(5);
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(175, 42);
+            this.flowLayoutPanel5.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(8, 11);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 20);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Brush size";
+            // 
+            // nudBrushSize
+            // 
+            this.nudBrushSize.AutoSize = true;
+            this.nudBrushSize.Location = new System.Drawing.Point(107, 8);
+            this.nudBrushSize.Name = "nudBrushSize";
+            this.nudBrushSize.Size = new System.Drawing.Size(60, 26);
+            this.nudBrushSize.TabIndex = 2;
+            this.nudBrushSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBrushSize.ValueChanged += new System.EventHandler(this.nudBrushSize_ValueChanged);
+            // 
             // panelMap
             // 
             this.panelMap.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
@@ -410,41 +446,6 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
-            // flowLayoutPanel5
-            // 
-            this.flowLayoutPanel5.AutoSize = true;
-            this.flowLayoutPanel5.Controls.Add(this.label2);
-            this.flowLayoutPanel5.Controls.Add(this.nudBrushSize);
-            this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 221);
-            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
-            this.flowLayoutPanel5.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel5.Size = new System.Drawing.Size(175, 42);
-            this.flowLayoutPanel5.TabIndex = 7;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 20);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Brush size";
-            // 
-            // nudBrushSize
-            // 
-            this.nudBrushSize.AutoSize = true;
-            this.nudBrushSize.Location = new System.Drawing.Point(107, 8);
-            this.nudBrushSize.Name = "nudBrushSize";
-            this.nudBrushSize.Size = new System.Drawing.Size(60, 26);
-            this.nudBrushSize.TabIndex = 2;
-            this.nudBrushSize.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -465,11 +466,11 @@
             this.flowLayoutPanel2.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.flowLayoutPanel3.PerformLayout();
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             this.flowLayoutPanel5.ResumeLayout(false);
             this.flowLayoutPanel5.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBrushSize)).EndInit();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

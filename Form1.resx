@@ -121,7 +121,7 @@
   <data name="btnBrush.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1
-        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADr0AAA69AUf7kK0AAAAHdElNRQfpBBUPMRZWDRRZAAAA
+        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADrwAAA68AZW8ckkAAAAHdElNRQfpBBUPMRZWDRRZAAAA
         GXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA+FJREFUWEfNl3tsU1Ucx29v11v2ars3
         20wJ22XA6FhX6tgUpWUgW+roAO1gONaOGv1DJwQMMMRoskcijiwExLjINDFR5gjhMbYRoyFI1MYZ/yRR
         Y5BkkmFXyyoT4/r1d3qrcw9kJvcWPskv5+bc800+Offcc8/lYsnCZB1rntdphJspgjZI181UcazzfuAW
@@ -145,7 +145,7 @@
   <data name="btnEraser.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1
-        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADdEAAA3RAcIr3+MAAAAHdElNRQfpBBUPMRZWDRRZAAAA
+        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADdAAAA3QARBsPQcAAAAHdElNRQfpBBUPMRZWDRRZAAAA
         GXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAAA1lJREFUWEfdl+1LU1Ecx+/udVubm/Nh
         MadzWZrOfJwlhVZEORV9YVhEUiihrr+gzHrXmx5EEDKLDOpFFBjkA0IsqTf9ARFR9KZXRWBP9KYHUPv1
         PWdevXvweufuJPrCh3N3d+75fTg7O2cT/sNIGtiQrBQ0GNJY6wI+UABwY8OElIUktyAYLuHitSCIc2jf
@@ -179,7 +179,7 @@
   <data name="btnBucket.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACMAAAAjCAYAAAAe2bNZAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1
-        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADr0AAA69AUf7kK0AAAAHdElNRQfpBBUPMRZWDRRZAAAA
+        MAAA6mAAADqYAAAXcJy6UTwAAAAJcEhZcwAADrwAAA68AZW8ckkAAAAHdElNRQfpBBUPMRZWDRRZAAAA
         GXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABtpJREFUWEe9mHtMVEcUxmfZlfcb5I1C
         0ICiPCqmhYoNsS3Wd+0f+AJEWw02TY0Y0zQGqhgiasEWoqCtioFapZW2okZN/7BK1PgWUPCFCAgKFgSp
         K6+v58xyyYqAaNl+yZdd7p2589tzZs7MRQwkIxJ9fEguINeTO8mt5HPkz1UqlQ19Gl400DD6SCDX+/r6

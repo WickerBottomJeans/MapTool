@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -59,7 +60,15 @@ namespace MapTool {
         }
 
         public void RenderLayers(List<MapLayer> mapLayersToRender) {
-            if (mapLayersToRender.Count == 0) return;
+            if (mapLayersToRender.Count == 0) {
+                if (cachedBitmap != null) {
+                    using (Graphics g = Graphics.FromImage(cachedBitmap)) {
+                        g.Clear(context.PanelBackColor);
+                    }
+                    OnMapDrawingFinished();
+                }
+                return;
+            }
 
             int bitmapWidth = mapLayersToRender.Max(l => l.Data.GetLength(1)) * Context.CellSize;
             int bitmapHeight = mapLayersToRender.Max(l => l.Data.GetLength(0)) * Context.CellSize;
