@@ -165,20 +165,20 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(74, 137);
+            this.label2.Location = new System.Drawing.Point(66, 137);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(60, 20);
+            this.label2.Size = new System.Drawing.Size(93, 20);
             this.label2.TabIndex = 1;
-            this.label2.Text = "Height:";
+            this.label2.Text = "Pixel height:";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(74, 87);
+            this.label1.Location = new System.Drawing.Point(72, 87);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 20);
+            this.label1.Size = new System.Drawing.Size(86, 20);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Width:";
+            this.label1.Text = "Pixel width:";
             // 
             // ImageConfigForm
             // 

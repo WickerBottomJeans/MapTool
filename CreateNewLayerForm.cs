@@ -24,5 +24,10 @@ namespace MapTool {
 
         private void textBox1_TextChanged(object sender, EventArgs e) {
         }
+
+        private void asaasd_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

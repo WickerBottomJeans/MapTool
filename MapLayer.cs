@@ -12,11 +12,58 @@ namespace MapTool {
         public string Name { get; set; }
         public Byte[,] Data { get; set; }
 
-        public MapLayer(string name, int height, int width) {
-            Name = name;
-            Data = new Byte[height, width];
+        public int mapPixelHeight { get; set; }
+        public int mapPixelWidth { get; set; }
+
+        public int mapStorageWidth { get; set; }
+        public int mapStorageHeight {  get; set; }
+
+        public int mapContentWidth { get; set; }
+        public int mapContentHeight { get; set; }
+        public MapLayer(string name, int mapHeight, int mapWidth, bool usingPixel) {
+            if (usingPixel)
+            {
+                Name = name;
+                this.mapPixelHeight = mapHeight;
+                this.mapPixelWidth = mapWidth;
+                setMapDimensions(this.mapPixelHeight, this.mapPixelWidth);
+                Data = new Byte[this.mapStorageHeight, this.mapStorageWidth];
+            } else
+            {
+                Name = name;
+                Data = new byte[mapHeight, mapWidth];
+            }
         }
 
+        public void setMapDimensions(int mapPixelHeight, int mapPixelWidth)
+        {
+            if ((mapPixelHeight == 0) || (mapPixelWidth == 0))
+            {
+                return;
+            } else
+            {
+                int MapGridWidth = 20;
+                int MapGridHeight = 20;
+
+
+                /// Số hàng và cột
+                int numCols = (mapPixelHeight - 1) / MapGridWidth + 1;
+                int numRows = (mapPixelWidth - 1) / MapGridHeight + 1;
+                //set content dimesnion trc
+                this.mapContentHeight = numRows;
+                this.mapContentWidth = numCols;
+
+                numCols = (int)Math.Ceiling(Math.Log(numCols, 2));
+                numCols = (int)Math.Pow(2, numCols);
+
+                numRows = (int)Math.Ceiling(Math.Log(numRows, 2));
+                numRows = (int)Math.Pow(2, numRows);
+                
+                //set storage
+                this.mapStorageHeight = numRows;
+                this.mapStorageWidth = numCols;
+            }
+        }
         public void Rotate(int degrees) {
             if (Data == null) {
                 return;

@@ -40,22 +40,29 @@ namespace MapTool {
         }
 
         //It render ontop of the previous bitmap
-        public void RenderPreviewAt(Point pt) {
-            if (cachedBitmap == null) {
-                int bitmapWidth = Context.CurrentLayer.Data.GetLength(1);
-                int bitmapHeight = Context.CurrentLayer.Data.GetLength(0);
+        public void RenderPreviewAt(Point pt)
+        {
+            if (cachedBitmap == null) return;
 
-                cachedBitmap?.Dispose();
-                cachedBitmap = new Bitmap(bitmapWidth, bitmapHeight);
-            }
-
-            using (Graphics g = Graphics.FromImage(cachedBitmap)) {
+            using (Graphics g = Graphics.FromImage(cachedBitmap))
+            {
                 Color color = Context.CurrentTool == ToolMode.Eraser ? Color.Black : GetColorForLayer(Context.CurrentLayer.Name);
-                using (Brush brush = new SolidBrush(color)) {
-                    g.FillRectangle(brush, pt.X * Context.CellSize, pt.Y * Context.CellSize, Context.CellSize * Context.BrushSize, Context.CellSize * Context.BrushSize);
+                using (Brush brush = new SolidBrush(color))
+                {
+                    for (int dy = 0; dy < Context.BrushSize; dy++)
+                    {
+                        for (int dx = 0; dx < Context.BrushSize; dx++)
+                        {
+                            int cellX = pt.X + dx;
+                            int cellY = pt.Y + dy;
+
+                            g.FillRectangle(brush,
+                                cellX * Context.CellSize, cellY * Context.CellSize,
+                                Context.CellSize, Context.CellSize);
+                        }
+                    }
                 }
             }
-
             OnMapDrawingFinished();
         }
 

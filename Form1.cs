@@ -41,7 +41,7 @@ namespace MapTool {
         //Background image
         private Image backgroundImage = null;
 
-        private bool autoGeneratePosBGImage = false;
+        private bool autoGeneratePosBGImage = true;
         private int bgImageWidth;
         private int bgImageHeight;
         private Point bgImagePos;
@@ -96,7 +96,7 @@ namespace MapTool {
                     int mapHeight = (int)Math.Sqrt(buffer.Length);
                     int mapWidth = (int)Math.Sqrt(buffer.Length);
 
-                    MapLayer mapLayer = new MapLayer(Path.GetFileNameWithoutExtension(filePath), mapHeight, mapWidth);
+                    MapLayer mapLayer = new MapLayer(Path.GetFileNameWithoutExtension(filePath), mapHeight, mapWidth, false);
                     mapLayer.Data.FromBytes(buffer);
                     mapLayerToAddToMapManager.Add(mapLayer);
                 }
@@ -427,23 +427,51 @@ namespace MapTool {
                     if (backgroundImage != null)
                         backgroundImage.Dispose();
 
-                    using (var configForm = new ImageConfigForm()) {
+                    using (var configForm = new ImageConfigForm())
+                    {
                         DialogResult result = configForm.ShowDialog();
 
-                        if (result == DialogResult.OK) {
-                            bgImageWidth = configForm.ImgWidth;
-                            bgImageHeight = configForm.ImgHeight;
+                        if (result == DialogResult.OK)
+                        {
+                            if (configForm.ImgWidth == 0 || configForm.ImgHeight == 0)
+                            {
+                                if (!(sharedContext.CurrentLayer.mapContentWidth == 0 || sharedContext.CurrentLayer.mapContentHeight == 0))
+                                {
+                                    bgImageWidth = sharedContext.CurrentLayer.mapContentWidth;
+                                    bgImageHeight = sharedContext.CurrentLayer.mapContentHeight;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("file layer chưa có pixel dimension, hãy tự điền", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    return;
+                                }
 
-                            if (configForm.HasPosition) {
+                            }
+                            else
+                            {
+                                bgImageWidth = configForm.ImgWidth;
+                                bgImageHeight = configForm.ImgHeight;
+                                sharedContext.CurrentLayer.setMapDimensions(bgImageWidth, bgImageHeight);
+                                bgImageWidth = sharedContext.CurrentLayer.mapContentWidth;
+                                bgImageHeight = sharedContext.CurrentLayer.mapContentHeight;
+                            }
+
+                            if (configForm.HasPosition)
+                            {
                                 bgImagePos = new Point(configForm.CoorX, configForm.CoorY);
                                 autoGeneratePosBGImage = false;
-                            } else {
+                            }
+                            else
+                            {
                                 autoGeneratePosBGImage = true;
                             }
-                        } else if (result == DialogResult.Cancel) {
+                        }
+                        else if (result == DialogResult.Cancel)
+                        {
                             return;
                         }
                     }
+
                     backgroundImage = Image.FromFile(openFileDialog.FileName);
 
                     panelMap.Invalidate();
