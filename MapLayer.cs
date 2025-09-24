@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -27,11 +28,11 @@ namespace MapTool {
                 this.mapPixelHeight = mapHeight;
                 this.mapPixelWidth = mapWidth;
                 setMapDimensions(this.mapPixelHeight, this.mapPixelWidth);
-                Data = new Byte[this.mapStorageHeight, this.mapStorageWidth];
+                Data = new Byte[ this.mapStorageWidth, this.mapStorageHeight];
             } else
             {
                 Name = name;
-                Data = new byte[mapHeight, mapWidth];
+                    Data = new byte[mapWidth,mapHeight ];
             }
         }
 
@@ -42,13 +43,14 @@ namespace MapTool {
                 return;
             } else
             {
-                int MapGridWidth = 20;
-                int MapGridHeight = 20;
+                int MapGridPixelWidth = 20;
+                int MapGridPixelHeight = 20;
 
 
                 /// Số hàng và cột
-                int numCols = (mapPixelHeight - 1) / MapGridWidth + 1;
-                int numRows = (mapPixelWidth - 1) / MapGridHeight + 1;
+                int numRows = (mapPixelHeight - 1) /  MapGridPixelHeight+ 1;
+                int numCols  = (mapPixelWidth - 1) / MapGridPixelWidth + 1;
+                Debug.WriteLine($"NumRow for contents: NumCols is{numRows}: {numCols}");
                 //set content dimesnion trc
                 this.mapContentHeight = numRows;
                 this.mapContentWidth = numCols;
@@ -58,7 +60,8 @@ namespace MapTool {
 
                 numRows = (int)Math.Ceiling(Math.Log(numRows, 2));
                 numRows = (int)Math.Pow(2, numRows);
-                
+                Debug.WriteLine($"NumRows for storage: NumCols is{numRows}: {numCols}");
+
                 //set storage
                 this.mapStorageHeight = numRows;
                 this.mapStorageWidth = numCols;
@@ -137,7 +140,7 @@ namespace MapTool {
 
             Data = newData;
         }
-
+        
         public bool IsValidCoor(int x, int y) {
             return (x >= 0 && y >= 0 && y < Data.GetLength(0) && x < Data.GetLength(1));
         }

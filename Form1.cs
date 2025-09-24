@@ -59,7 +59,7 @@ namespace MapTool {
                 BrushSize = 1,
                 CurrentTool = ToolMode.None,
                 PanelBackColor = Color.Black,
-                maxZoomInValue = 5
+                maxZoomInValue = 20
             };
 
             mapLayerManager = new MapLayerManager();
@@ -87,22 +87,52 @@ namespace MapTool {
             UpdatePanelMap();
         }
 
-        private void btnLoadFile_Click(object sender, EventArgs e) {
+        private void btnLoadFile_Click(object sender, EventArgs e)
+        {
             List<MapLayer> mapLayerToAddToMapManager = new List<MapLayer>();
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK) {
-                foreach (string filePath in openFileDialog1.FileNames) {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                foreach (string filePath in openFileDialog1.FileNames)
+                {
                     byte[] buffer = File.ReadAllBytes(filePath);
-                    int mapHeight = (int)Math.Sqrt(buffer.Length);
-                    int mapWidth = (int)Math.Sqrt(buffer.Length);
+                    CreateNewLayerForm newLayerForm = new CreateNewLayerForm();
+                    newLayerForm.InitialLayerName = Path.GetFileNameWithoutExtension(filePath);
 
-                    MapLayer mapLayer = new MapLayer(Path.GetFileNameWithoutExtension(filePath), mapHeight, mapWidth, false);
-                    mapLayer.Data.FromBytes(buffer);
-                    mapLayerToAddToMapManager.Add(mapLayer);
+                    MapLayer mapLayer;
+
+                    if (newLayerForm.ShowDialog() == DialogResult.OK)
+                    {
+                        // Get the user's input from the form
+                        int mapWidthPixel = newLayerForm.LayerWidth;
+                        int mapHeightPixel = newLayerForm.LayerHeight;
+
+                        // Case 1: User did not fill width and height
+                        if (mapWidthPixel == 0 || mapHeightPixel == 0)
+                        {
+                            int mapHeight = (int)Math.Sqrt(buffer.Length);
+                            int mapWidth = (int)Math.Sqrt(buffer.Length);
+                            mapLayer = new MapLayer(Path.GetFileNameWithoutExtension(filePath), mapHeight, mapWidth, false);
+                        }
+                        // Case 2: User filled width and height
+                        else
+                        {
+                            mapLayer = new MapLayer(newLayerForm.LayerName, mapHeightPixel, mapWidthPixel, true);
+                        }
+
+                        mapLayer.Data.FromBytes(buffer);
+                        mapLayerToAddToMapManager.Add(mapLayer);
+                    }
                 }
-                mapLayerManager.AddLayers(mapLayerToAddToMapManager);
+
+                // Check if the list of layers is not empty before adding
+                if (mapLayerToAddToMapManager.Any())
+                {
+                    mapLayerManager.AddLayers(mapLayerToAddToMapManager);
+                }
             }
         }
+
 
         private void UpdateClbLayers() {
             clbLayers.Items.Clear();
@@ -320,7 +350,7 @@ namespace MapTool {
         }
 
         private void btnZoomIn_Click(object sender, EventArgs e) {
-            if (sharedContext.CellSize < 5) {
+            if (sharedContext.CellSize < 20) {
                 sharedContext.CellSize++;
                 UpdatePanelMap();
             } else {
@@ -368,7 +398,8 @@ namespace MapTool {
         }
 
         private void panelMap_Paint(object sender, PaintEventArgs e) {
-            if (backgroundImage != null) {
+            List<MapLayer> visibleLayer = GetVisibleLayers();
+            if (backgroundImage != null && visibleLayer.Count > 0) {
                 int scaledBackgroundWidth = (bgImageWidth * sharedContext.CellSize);
                 int scaledBackgroundHeight = (bgImageHeight * sharedContext.CellSize);
 
@@ -413,7 +444,6 @@ namespace MapTool {
                 }
             }
 
-            Debug.WriteLine("Panel updated");
         }
 
         private void btnLoadBG_Click(object sender, EventArgs e) {
@@ -437,8 +467,8 @@ namespace MapTool {
                             {
                                 if (!(sharedContext.CurrentLayer.mapContentWidth == 0 || sharedContext.CurrentLayer.mapContentHeight == 0))
                                 {
-                                    bgImageWidth = sharedContext.CurrentLayer.mapContentWidth;
-                                    bgImageHeight = sharedContext.CurrentLayer.mapContentHeight;
+                                   bgImageWidth  = sharedContext.CurrentLayer.mapContentWidth;
+                                  bgImageHeight    = sharedContext.CurrentLayer.mapContentHeight;
                                 }
                                 else
                                 {
@@ -486,14 +516,14 @@ namespace MapTool {
         }
 
         private void btnCreateNewLayer_Click(object sender, EventArgs e) {
-            using (var inputForm = new CreateNewLayerForm()) // Assuming your new form class is named NewLayerInputForm
+            using (var inputForm = new CreateNewLayerForm()) 
             {
                 if (inputForm.ShowDialog() == DialogResult.OK) {
                     string layerName = inputForm.LayerName;
                     int width = inputForm.LayerWidth;
                     int height = inputForm.LayerHeight;
                     if (!string.IsNullOrWhiteSpace(layerName) && width > 0 && height > 0) {
-                        mapLayerManager.AddLayer(layerName, height, width);
+                        mapLayerManager.AddLayer(layerName, width, height);
                     } else {
                         MessageBox.Show("Invalid layer details.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
