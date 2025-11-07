@@ -467,8 +467,8 @@ namespace MapTool {
                             {
                                 if (!(sharedContext.CurrentLayer.mapContentWidth == 0 || sharedContext.CurrentLayer.mapContentHeight == 0))
                                 {
-                                   bgImageWidth  = sharedContext.CurrentLayer.mapContentWidth;
-                                  bgImageHeight    = sharedContext.CurrentLayer.mapContentHeight;
+                                   bgImageWidth  = sharedContext.CurrentLayer.mapContentHeight;
+                                  bgImageHeight    = sharedContext.CurrentLayer.mapContentWidth;
                                 }
                                 else
                                 {
@@ -482,8 +482,23 @@ namespace MapTool {
                                 bgImageWidth = configForm.ImgWidth;
                                 bgImageHeight = configForm.ImgHeight;
                                 sharedContext.CurrentLayer.setMapDimensions(bgImageWidth, bgImageHeight);
-                                bgImageWidth = sharedContext.CurrentLayer.mapContentWidth;
-                                bgImageHeight = sharedContext.CurrentLayer.mapContentHeight;
+                                int BeforeConsiderRatio_bgImageWidth = sharedContext.CurrentLayer.mapContentHeight;
+                                int BeforeConsiderRatio_bgImageHeight = sharedContext.CurrentLayer.mapContentWidth;
+
+                                bgImageWidth = BeforeConsiderRatio_bgImageWidth;
+                                bgImageHeight = BeforeConsiderRatio_bgImageHeight;
+                                //float aspectRatio = (float)bgImageWidth / bgImageHeight;
+                                //if (aspectRatio > 1)
+                                //{
+                                //    bgImageWidth = BeforeConsiderRatio_bgImageWidth;
+                                //    bgImageHeight = (int)(BeforeConsiderRatio_bgImageWidth / aspectRatio);
+
+                                //} else
+                                //{
+                                //    bgImageHeight = BeforeConsiderRatio_bgImageHeight;
+                                //    bgImageWidth = (int)(BeforeConsiderRatio_bgImageWidth * aspectRatio);
+                                //}
+                                //Now we need to consider ratio and set bgImageWidth, bgImageHeight again
                             }
 
                             if (configForm.HasPosition)
