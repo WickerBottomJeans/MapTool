@@ -39,6 +39,14 @@ namespace MapTool {
             );
         }
 
+        public Point LogicalToBitmap(Point logicalPoint)
+        {
+            return new Point(
+                logicalPoint.X * Context.CellSize,
+                logicalPoint.Y * Context.CellSize
+            );
+        }
+
         public Rectangle LogicalToScreen(Rectangle logicalRect) {
             return new Rectangle(
                 logicalRect.X * Context.CellSize + Context.PanOffset.X,

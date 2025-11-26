@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace MapTool {
 
-    internal class MapLayerManager {
+    public class MapLayerManager {
         private Dictionary<string, MapLayer> layersDict = new Dictionary<string, MapLayer>();
 
         public event EventHandler LayersDictChanged;
 
-        protected virtual void OnLayersDictChanged() {
+        public virtual void OnLayersDictChanged() {
             LayersDictChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -44,6 +44,7 @@ namespace MapTool {
         }
 
         public IEnumerable<MapLayer> GetAllLayers() => layersDict.Values;
+        public IEnumerable<string> GetAllLayerNames() => layersDict.Keys;
 
         public void AddLayer(string name, int pixelWidth, int pixelHeight) {
             if (!string.IsNullOrWhiteSpace(name) && pixelWidth > 0 && pixelHeight > 0 && !layersDict.ContainsKey(name)) {
@@ -51,6 +52,11 @@ namespace MapTool {
                 layersDict[name] = newLayer;
                 OnLayersDictChanged();
             }
+        }
+        
+        public void XOR_1(MapLayer source, MapLayer target)
+        {
+            target.XOR_1(source);
         }
     }
 }

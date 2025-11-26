@@ -119,30 +119,79 @@ namespace MapTool {
             }
         }
 
-        //This render exactly how the bitmap should look
-        public void RenderLayersAt(List<MapLayer> mapLayersToRender, Point dirtyScreenPoint) {
+        //public void RenderLayersAt(List<MapLayer> mapLayersToRender, Point dirtyScreenPoint)
+        //{
+        //    if (mapLayersToRender.Count == 0 || cachedBitmap == null) return;
+        //    using (Graphics g = Graphics.FromImage(cachedBitmap))
+        //    {
+        //        // Convert screen to logical, then logical to bitmap
+        //        Point dirtyLogicalPoint = coorConverter.ScreenToLogical(dirtyScreenPoint);
+        //        Point dirtyBitmapPoint = coorConverter.LogicalToBitmap(dirtyLogicalPoint);
+
+        //        var brushes = new Dictionary<string, SolidBrush>();
+        //        try
+        //        {
+        //            foreach (MapLayer layer in mapLayersToRender)
+        //            {
+        //                if (!brushes.ContainsKey(layer.Name))
+        //                {
+        //                    brushes[layer.Name] = new SolidBrush(GetColorForLayer(layer.Name));
+        //                }
+        //                SolidBrush brush = brushes[layer.Name];
+
+        //                for (int brushY = 0; brushY < Context.BrushSize; brushY++)
+        //                {
+        //                    for (int brushX = 0; brushX < Context.BrushSize; brushX++)
+        //                    {
+        //                        int logicalY = dirtyLogicalPoint.Y + brushY;
+        //                        int logicalX = dirtyLogicalPoint.X + brushX;
+        //                        if (layer.IsValidCoor(logicalX, logicalY) && layer.Data[logicalY, logicalX] == 1)
+        //                        {
+        //                            int screenX = dirtyBitmapPoint.X + brushX * Context.CellSize;
+        //                            int screenY = dirtyBitmapPoint.Y + brushY * Context.CellSize;
+        //                            g.FillRectangle(brush, screenX, screenY, Context.CellSize, Context.CellSize);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            foreach (var brush in brushes.Values)
+        //            {
+        //                brush.Dispose();
+        //            }
+        //            brushes.Clear();
+        //        }
+        //    }
+        //}
+
+        public void RenderLayersAt(List<MapLayer> mapLayersToRender, Point dirtyScreenPoint, int alphaValue = 255)
+        {
             if (mapLayersToRender.Count == 0 || cachedBitmap == null) return;
-
-            using (Graphics g = Graphics.FromImage(cachedBitmap)) {
-                // Clear the dirty area to black first
-                SolidBrush dirtyEraserBrush = new SolidBrush(Context.PanelBackColor);
-                Point dirtyBitmapPoint = coorConverter.ScreenToBitmap(dirtyScreenPoint);
-                g.FillRectangle(dirtyEraserBrush, dirtyBitmapPoint.X, dirtyBitmapPoint.Y, Context.BrushSize * Context.CellSize, Context.BrushSize * Context.CellSize);
-
+            using (Graphics g = Graphics.FromImage(cachedBitmap))
+            {
+                Point dirtyLogicalPoint = coorConverter.ScreenToLogical(dirtyScreenPoint);
+                Point dirtyBitmapPoint = coorConverter.LogicalToBitmap(dirtyLogicalPoint);
                 var brushes = new Dictionary<string, SolidBrush>();
-                try {
-                    foreach (MapLayer layer in mapLayersToRender) {
-                        if (!brushes.ContainsKey(layer.Name)) {
-                            brushes[layer.Name] = new SolidBrush(GetColorForLayer(layer.Name));
+                try
+                {
+                    foreach (MapLayer layer in mapLayersToRender)
+                    {
+                        if (!brushes.ContainsKey(layer.Name))
+                        {
+                            Color baseColor = GetColorForLayer(layer.Name);
+                            brushes[layer.Name] = new SolidBrush(Color.FromArgb(alphaValue, baseColor));
                         }
                         SolidBrush brush = brushes[layer.Name];
-                        Point dirtyLogicalPoint = coorConverter.ScreenToLogical(dirtyScreenPoint);
-                        for (int brushY = 0; brushY < Context.BrushSize; brushY++) {
-                            for (int brushX = 0; brushX < Context.BrushSize; brushX++) {
+                        for (int brushY = 0; brushY < Context.BrushSize; brushY++)
+                        {
+                            for (int brushX = 0; brushX < Context.BrushSize; brushX++)
+                            {
                                 int logicalY = dirtyLogicalPoint.Y + brushY;
                                 int logicalX = dirtyLogicalPoint.X + brushX;
-
-                                if (layer.IsValidCoor(logicalX, logicalY) && layer.Data[logicalY, logicalX] == 1) {
+                                if (layer.IsValidCoor(logicalX, logicalY) && layer.Data[logicalY, logicalX] == 1)
+                                {
                                     int screenX = dirtyBitmapPoint.X + brushX * Context.CellSize;
                                     int screenY = dirtyBitmapPoint.Y + brushY * Context.CellSize;
                                     g.FillRectangle(brush, screenX, screenY, Context.CellSize, Context.CellSize);
@@ -150,8 +199,11 @@ namespace MapTool {
                             }
                         }
                     }
-                } finally {
-                    foreach (var brush in brushes.Values) {
+                }
+                finally
+                {
+                    foreach (var brush in brushes.Values)
+                    {
                         brush.Dispose();
                     }
                     brushes.Clear();

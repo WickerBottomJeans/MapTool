@@ -46,6 +46,9 @@ namespace MapTool {
         private int bgImageHeight;
         private Point bgImagePos;
 
+        //for hovering
+        private Point hoverPosition = Point.Empty;
+        private bool showHoverPreview = false;
         public mainForm() {
             InitializeComponent();
 
@@ -173,6 +176,8 @@ namespace MapTool {
             }));
         }
 
+        private Point lastDrawPoint = Point.Empty;
+
         private void panelMap_MouseDown(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Middle) {
                 isPanning = true;
@@ -190,8 +195,10 @@ namespace MapTool {
                 sharedContext.rectScreenEndPoint = e.Location;
                 sharedContext.rectScreenStartPoint = e.Location;
             }
-            if (sharedContext.CurrentTool == ToolMode.Brush || sharedContext.CurrentTool == ToolMode.Eraser) {
+            if (sharedContext.CurrentTool == ToolMode.Brush || sharedContext.CurrentTool == ToolMode.Eraser)
+            {
                 isDrawing = true;
+                lastDrawPoint = e.Location; // Store starting point
                 mapEditor.DrawAt(coorConverter.ScreenToLogical(e.Location));
                 mapRenderer.RenderLayersAt(GetVisibleLayers(), e.Location);
                 panelMap.Invalidate();
@@ -223,11 +230,19 @@ namespace MapTool {
                 panelMap.Invalidate();
             }
 
-            if (sharedContext.CurrentTool == ToolMode.Brush && isDrawing || sharedContext.CurrentTool == ToolMode.Eraser && isDrawing) {
-                mapEditor.DrawAt(coorConverter.ScreenToLogical(e.Location));
-                mapRenderer.RenderLayersAt(GetVisibleLayers(), e.Location);
-                panelMap.Invalidate();
+            if (sharedContext.CurrentTool == ToolMode.Brush && isDrawing || sharedContext.CurrentTool == ToolMode.Eraser && isDrawing)
+            {
+                // Interpolate between last point and current point
+                InterpolateAndDraw(lastDrawPoint, e.Location);
+                lastDrawPoint = e.Location;
             }
+            if (sharedContext.CurrentTool == ToolMode.Brush && !isDrawing || sharedContext.CurrentTool == ToolMode.Eraser && !isDrawing)
+            {
+                hoverPosition = e.Location;
+                showHoverPreview = true;
+                panelMap.Invalidate(); 
+            }
+
 
             if (sharedContext.CurrentTool == ToolMode.Line && isDrawingLine) {
                 sharedContext.lineScreenEnd = e.Location;
@@ -260,6 +275,35 @@ namespace MapTool {
                 UpdatePanelMap();
             }
         }
+
+        private void InterpolateAndDraw(Point start, Point end)
+        {
+            int dx = end.X - start.X;
+            int dy = end.Y - start.Y;
+            int steps = Math.Max(Math.Abs(dx), Math.Abs(dy));
+
+            if (steps == 0)
+            {
+                // Just draw at current position
+                mapEditor.DrawAt(coorConverter.ScreenToLogical(end));
+                mapRenderer.RenderLayersAt(GetVisibleLayers(), end);
+                panelMap.Invalidate();
+                return;
+            }
+
+            for (int i = 0; i <= steps; i++)
+            {
+                float t = (float)i / steps;
+                Point interpolated = new Point(
+                    start.X + (int)(dx * t),
+                    start.Y + (int)(dy * t)
+                );
+                mapEditor.DrawAt(coorConverter.ScreenToLogical(interpolated));
+                mapRenderer.RenderLayersAt(GetVisibleLayers(), interpolated);
+            }
+            panelMap.Invalidate();
+        }
+
 
         private void btnBrush_Click(object sender, EventArgs e) {
             sharedContext.CurrentTool = ToolMode.Brush;
@@ -443,7 +487,20 @@ namespace MapTool {
                     e.Graphics.DrawLine(pen, sharedContext.lineScreenStart, sharedContext.lineScreenEnd);
                 }
             }
+            if (showHoverPreview && (sharedContext.CurrentTool == ToolMode.Brush || sharedContext.CurrentTool == ToolMode.Eraser))
+            {
+                Point logicalPoint = coorConverter.ScreenToLogical(hoverPosition);
+                Point screenPoint = coorConverter.LogicalToScreen(logicalPoint);
 
+                using (Brush ghostBrush = new SolidBrush(Color.FromArgb(64, Color.White)))
+                {
+                    e.Graphics.FillRectangle(ghostBrush,
+                        screenPoint.X,
+                        screenPoint.Y,
+                        sharedContext.BrushSize * sharedContext.CellSize,
+                        sharedContext.BrushSize * sharedContext.CellSize);
+                }
+            }
         }
 
         private void btnLoadBG_Click(object sender, EventArgs e) {
@@ -570,6 +627,21 @@ namespace MapTool {
                 File.WriteAllBytes(saveFileDialog.FileName, buffer);
                 MessageBox.Show("Layer saved successfully.");
             }
+        }
+
+        private void btnXOR_Click(object sender, EventArgs e)
+        {
+            if (this.mapLayerManager != null)
+            {
+                XOR xorForm = new XOR(this.mapLayerManager);
+                xorForm.ShowDialog();
+            }
+        }
+
+        private void panelMap_MouseLeave(object sender, EventArgs e)
+        {
+            showHoverPreview = false;
+            panelMap.Invalidate();
         }
     }
 }

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace MapTool {
 
-    internal class MapLayer {
+    public class MapLayer {
         public string Name { get; set; }
         public Byte[,] Data { get; set; }
 
@@ -147,6 +147,33 @@ namespace MapTool {
 
         public bool IsValidCoor(Point p) {
             return (p.X >= 0 && p.Y >= 0 && p.Y < Data.GetLength(0) && p.X < Data.GetLength(1));
+        }
+
+        public void XOR_1(MapLayer sourceLayer)
+        {
+            if (sourceLayer == null || sourceLayer.Data == null)
+            {
+                return;
+            }
+
+            int thisHeight = Data.GetLength(0);
+            int thisWidth = Data.GetLength(1);
+
+            int sourceHeight = sourceLayer.Data.GetLength(0);
+            int sourceWidth = sourceLayer.Data.GetLength(1);
+
+            if (thisHeight != sourceHeight || thisWidth != sourceWidth)
+            {
+                return;
+            }
+
+            for (int y = 0; y < thisHeight; y++)
+            {
+                for (int x = 0; x < thisWidth; x++)
+                {
+                    Data[y, x] = (byte)(this.Data[y, x] ^ sourceLayer.Data[y, x]);
+                }
+            }
         }
     }
 }

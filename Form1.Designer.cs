@@ -36,14 +36,7 @@
             this.btnRemoveLayer = new System.Windows.Forms.Button();
             this.clbLayers = new System.Windows.Forms.CheckedListBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnBrush = new System.Windows.Forms.Button();
-            this.btnEraser = new System.Windows.Forms.Button();
-            this.btnDrawRect = new System.Windows.Forms.Button();
-            this.btnDrawLine = new System.Windows.Forms.Button();
-            this.btnBucket = new System.Windows.Forms.Button();
-            this.btnRotate = new System.Windows.Forms.Button();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
-            this.btnReloadBitmap = new System.Windows.Forms.Button();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.btnZoomIn = new System.Windows.Forms.Button();
@@ -54,6 +47,14 @@
             this.panelMap = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnBrush = new System.Windows.Forms.Button();
+            this.btnEraser = new System.Windows.Forms.Button();
+            this.btnDrawRect = new System.Windows.Forms.Button();
+            this.btnDrawLine = new System.Windows.Forms.Button();
+            this.btnBucket = new System.Windows.Forms.Button();
+            this.btnRotate = new System.Windows.Forms.Button();
+            this.btnReloadBitmap = new System.Windows.Forms.Button();
+            this.btnXOR = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
@@ -214,12 +215,142 @@
             this.flowLayoutPanel2.Controls.Add(this.btnRotate);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel4);
             this.flowLayoutPanel2.Controls.Add(this.btnReloadBitmap);
+            this.flowLayoutPanel2.Controls.Add(this.btnXOR);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel3);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel5);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 329);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(276, 266);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(231, 318);
             this.flowLayoutPanel2.TabIndex = 3;
+            // 
+            // flowLayoutPanel4
+            // 
+            this.flowLayoutPanel4.AutoSize = true;
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(228, 74);
+            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(0, 0);
+            this.flowLayoutPanel4.TabIndex = 5;
+            // 
+            // flowLayoutPanel3
+            // 
+            this.flowLayoutPanel3.AutoSize = true;
+            this.flowLayoutPanel3.Controls.Add(this.label1);
+            this.flowLayoutPanel3.Controls.Add(this.btnZoomIn);
+            this.flowLayoutPanel3.Controls.Add(this.btnZoomOut);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 221);
+            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
+            this.flowLayoutPanel3.Padding = new System.Windows.Forms.Padding(5);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 46);
+            this.flowLayoutPanel3.TabIndex = 6;
+            // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(54, 20);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Zoom";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // btnZoomIn
+            // 
+            this.btnZoomIn.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnZoomIn.AutoSize = true;
+            this.btnZoomIn.Location = new System.Drawing.Point(68, 8);
+            this.btnZoomIn.Name = "btnZoomIn";
+            this.btnZoomIn.Size = new System.Drawing.Size(56, 30);
+            this.btnZoomIn.TabIndex = 1;
+            this.btnZoomIn.Text = "+";
+            this.btnZoomIn.UseVisualStyleBackColor = true;
+            this.btnZoomIn.Click += new System.EventHandler(this.btnZoomIn_Click);
+            // 
+            // btnZoomOut
+            // 
+            this.btnZoomOut.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnZoomOut.AutoSize = true;
+            this.btnZoomOut.Location = new System.Drawing.Point(130, 8);
+            this.btnZoomOut.Name = "btnZoomOut";
+            this.btnZoomOut.Size = new System.Drawing.Size(56, 30);
+            this.btnZoomOut.TabIndex = 2;
+            this.btnZoomOut.Text = "-";
+            this.btnZoomOut.UseVisualStyleBackColor = true;
+            this.btnZoomOut.Click += new System.EventHandler(this.btnZoomOut_Click);
+            // 
+            // flowLayoutPanel5
+            // 
+            this.flowLayoutPanel5.AutoSize = true;
+            this.flowLayoutPanel5.Controls.Add(this.label2);
+            this.flowLayoutPanel5.Controls.Add(this.nudBrushSize);
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 273);
+            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
+            this.flowLayoutPanel5.Padding = new System.Windows.Forms.Padding(5);
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(175, 42);
+            this.flowLayoutPanel5.TabIndex = 7;
+            // 
+            // label2
+            // 
+            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(8, 11);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(93, 20);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Brush size";
+            // 
+            // nudBrushSize
+            // 
+            this.nudBrushSize.AutoSize = true;
+            this.nudBrushSize.Location = new System.Drawing.Point(107, 8);
+            this.nudBrushSize.Name = "nudBrushSize";
+            this.nudBrushSize.Size = new System.Drawing.Size(60, 26);
+            this.nudBrushSize.TabIndex = 2;
+            this.nudBrushSize.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.nudBrushSize.ValueChanged += new System.EventHandler(this.nudBrushSize_ValueChanged);
+            // 
+            // panelMap
+            // 
+            this.panelMap.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
+            this.panelMap.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelMap.Location = new System.Drawing.Point(314, 3);
+            this.panelMap.Name = "panelMap";
+            this.panelMap.Size = new System.Drawing.Size(1026, 838);
+            this.panelMap.TabIndex = 1;
+            this.panelMap.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMap_Paint);
+            this.panelMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseDown);
+            this.panelMap.MouseLeave += new System.EventHandler(this.panelMap_MouseLeave);
+            this.panelMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseMove);
+            this.panelMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseUp);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.Filter = "Binary files (*.txt)|*.txt|All files (*.*)|*.*";
+            this.openFileDialog1.Multiselect = true;
+            this.openFileDialog1.Title = "Select Map Binary Files";
+            // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.AutoSize = true;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.panelMap, 1, 0);
+            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
+            this.tableLayoutPanel2.TabIndex = 2;
             // 
             // btnBrush
             // 
@@ -302,17 +433,10 @@
             this.btnRotate.UseVisualStyleBackColor = true;
             this.btnRotate.Click += new System.EventHandler(this.btnRotate_Click);
             // 
-            // flowLayoutPanel4
-            // 
-            this.flowLayoutPanel4.AutoSize = true;
-            this.flowLayoutPanel4.Location = new System.Drawing.Point(228, 74);
-            this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(0, 0);
-            this.flowLayoutPanel4.TabIndex = 5;
-            // 
             // btnReloadBitmap
             // 
             this.btnReloadBitmap.AutoSize = true;
+            this.btnReloadBitmap.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.btnReloadBitmap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.btnReloadBitmap.Image = global::MapTool.Properties.Resources.ReloadIco__1_;
             this.btnReloadBitmap.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -326,125 +450,21 @@
             this.btnReloadBitmap.UseVisualStyleBackColor = true;
             this.btnReloadBitmap.Click += new System.EventHandler(this.btnReloadBitmap_Click);
             // 
-            // flowLayoutPanel3
+            // btnXOR
             // 
-            this.flowLayoutPanel3.AutoSize = true;
-            this.flowLayoutPanel3.Controls.Add(this.label1);
-            this.flowLayoutPanel3.Controls.Add(this.btnZoomIn);
-            this.flowLayoutPanel3.Controls.Add(this.btnZoomOut);
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(79, 145);
-            this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 46);
-            this.flowLayoutPanel3.TabIndex = 6;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 20);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Zoom";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // btnZoomIn
-            // 
-            this.btnZoomIn.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnZoomIn.AutoSize = true;
-            this.btnZoomIn.Location = new System.Drawing.Point(68, 8);
-            this.btnZoomIn.Name = "btnZoomIn";
-            this.btnZoomIn.Size = new System.Drawing.Size(56, 30);
-            this.btnZoomIn.TabIndex = 1;
-            this.btnZoomIn.Text = "+";
-            this.btnZoomIn.UseVisualStyleBackColor = true;
-            this.btnZoomIn.Click += new System.EventHandler(this.btnZoomIn_Click);
-            // 
-            // btnZoomOut
-            // 
-            this.btnZoomOut.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnZoomOut.AutoSize = true;
-            this.btnZoomOut.Location = new System.Drawing.Point(130, 8);
-            this.btnZoomOut.Name = "btnZoomOut";
-            this.btnZoomOut.Size = new System.Drawing.Size(56, 30);
-            this.btnZoomOut.TabIndex = 2;
-            this.btnZoomOut.Text = "-";
-            this.btnZoomOut.UseVisualStyleBackColor = true;
-            this.btnZoomOut.Click += new System.EventHandler(this.btnZoomOut_Click);
-            // 
-            // flowLayoutPanel5
-            // 
-            this.flowLayoutPanel5.AutoSize = true;
-            this.flowLayoutPanel5.Controls.Add(this.label2);
-            this.flowLayoutPanel5.Controls.Add(this.nudBrushSize);
-            this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 221);
-            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
-            this.flowLayoutPanel5.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel5.Size = new System.Drawing.Size(175, 42);
-            this.flowLayoutPanel5.TabIndex = 7;
-            // 
-            // label2
-            // 
-            this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 11);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 20);
-            this.label2.TabIndex = 0;
-            this.label2.Text = "Brush size";
-            // 
-            // nudBrushSize
-            // 
-            this.nudBrushSize.AutoSize = true;
-            this.nudBrushSize.Location = new System.Drawing.Point(107, 8);
-            this.nudBrushSize.Name = "nudBrushSize";
-            this.nudBrushSize.Size = new System.Drawing.Size(60, 26);
-            this.nudBrushSize.TabIndex = 2;
-            this.nudBrushSize.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudBrushSize.ValueChanged += new System.EventHandler(this.nudBrushSize_ValueChanged);
-            // 
-            // panelMap
-            // 
-            this.panelMap.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.panelMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelMap.Location = new System.Drawing.Point(314, 3);
-            this.panelMap.Name = "panelMap";
-            this.panelMap.Size = new System.Drawing.Size(1026, 838);
-            this.panelMap.TabIndex = 1;
-            this.panelMap.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMap_Paint);
-            this.panelMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseDown);
-            this.panelMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseMove);
-            this.panelMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panelMap_MouseUp);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.Filter = "Binary files (*.txt)|*.txt|All files (*.*)|*.*";
-            this.openFileDialog1.Multiselect = true;
-            this.openFileDialog1.Title = "Select Map Binary Files";
-            // 
-            // tableLayoutPanel2
-            // 
-            this.tableLayoutPanel2.AutoSize = true;
-            this.tableLayoutPanel2.ColumnCount = 2;
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 0);
-            this.tableLayoutPanel2.Controls.Add(this.panelMap, 1, 0);
-            this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
-            this.tableLayoutPanel2.TabIndex = 2;
+            this.btnXOR.AutoSize = true;
+            this.btnXOR.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnXOR.Image = ((System.Drawing.Image)(resources.GetObject("btnXOR.Image")));
+            this.btnXOR.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnXOR.Location = new System.Drawing.Point(79, 145);
+            this.btnXOR.Name = "btnXOR";
+            this.btnXOR.Size = new System.Drawing.Size(70, 70);
+            this.btnXOR.TabIndex = 9;
+            this.btnXOR.Text = "XOR";
+            this.btnXOR.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnXOR.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnXOR.UseVisualStyleBackColor = true;
+            this.btnXOR.Click += new System.EventHandler(this.btnXOR_Click);
             // 
             // mainForm
             // 
@@ -508,6 +528,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel5;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown nudBrushSize;
+        private System.Windows.Forms.Button btnXOR;
     }
 }
 
