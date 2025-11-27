@@ -123,5 +123,105 @@ namespace MapTool {
             }
             return allMap;
         }
+        // Add these methods to MapEditor class:
+
+        public void FillPolygon(List<Point> points)
+        {
+            if (points.Count < 3) return;
+
+            // Get convex hull (outer boundary, orderless)
+            List<Point> hull = ComputeConvexHull(points);
+
+            // Fill inside the hull
+            FillPolygonScanline(hull);
+        }
+
+        private List<Point> ComputeConvexHull(List<Point> points)
+        {
+            if (points.Count < 3) return points;
+
+            // Sort points by X, then Y
+            List<Point> sorted = points.OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
+
+            List<Point> lower = new List<Point>();
+            foreach (Point p in sorted)
+            {
+                while (lower.Count >= 2 && Cross(lower[lower.Count - 2], lower[lower.Count - 1], p) <= 0)
+                {
+                    lower.RemoveAt(lower.Count - 1);
+                }
+                lower.Add(p);
+            }
+
+            List<Point> upper = new List<Point>();
+            for (int i = sorted.Count - 1; i >= 0; i--)
+            {
+                Point p = sorted[i];
+                while (upper.Count >= 2 && Cross(upper[upper.Count - 2], upper[upper.Count - 1], p) <= 0)
+                {
+                    upper.RemoveAt(upper.Count - 1);
+                }
+                upper.Add(p);
+            }
+
+            lower.RemoveAt(lower.Count - 1);
+            upper.RemoveAt(upper.Count - 1);
+            lower.AddRange(upper);
+
+            return lower;
+        }
+
+        private long Cross(Point O, Point A, Point B)
+        {
+            return (long)(A.X - O.X) * (B.Y - O.Y) - (long)(A.Y - O.Y) * (B.X - O.X);
+        }
+
+        private void FillPolygonScanline(List<Point> polygon)
+        {
+            if (polygon.Count < 3) return;
+
+            // Find bounding box
+            int minY = polygon.Min(p => p.Y);
+            int maxY = polygon.Max(p => p.Y);
+            int minX = polygon.Min(p => p.X);
+            int maxX = polygon.Max(p => p.X);
+
+            // For each scanline
+            for (int y = minY; y <= maxY; y++)
+            {
+                List<int> intersections = new List<int>();
+
+                // Find intersections with polygon edges
+                for (int i = 0; i < polygon.Count; i++)
+                {
+                    Point p1 = polygon[i];
+                    Point p2 = polygon[(i + 1) % polygon.Count];
+
+                    if ((p1.Y <= y && p2.Y > y) || (p2.Y <= y && p1.Y > y))
+                    {
+                        float x = p1.X + (float)(y - p1.Y) / (p2.Y - p1.Y) * (p2.X - p1.X);
+                        intersections.Add((int)x);
+                    }
+                }
+
+                intersections.Sort();
+
+                // Fill between pairs of intersections
+                for (int i = 0; i < intersections.Count; i += 2)
+                {
+                    if (i + 1 < intersections.Count)
+                    {
+                        for (int x = intersections[i]; x <= intersections[i + 1]; x++)
+                        {
+                            if (Context.CurrentLayer.IsValidCoor(x, y))
+                            {
+                                Context.CurrentLayer.Data[y, x] = 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

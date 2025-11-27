@@ -49,6 +49,10 @@ namespace MapTool {
         //for hovering
         private Point hoverPosition = Point.Empty;
         private bool showHoverPreview = false;
+
+        //convex hull
+        private List<Point> polygonPoints = new List<Point>();
+        private bool isPolygonMode = false;
         public mainForm() {
             InitializeComponent();
 
@@ -382,6 +386,8 @@ namespace MapTool {
             nudBrushSize.Value = defaultBrushSize;
             panelMap.BackColor = sharedContext.PanelBackColor;
             panelMap.MouseWheel += PanelMap_MouseWheel;
+            this.KeyPreview = true;
+            this.KeyDown += MainForm_KeyDown;
             btnUp.Enabled = false;
             btnDown.Enabled = false;
             btnLoadBG.Enabled = false;
@@ -390,6 +396,45 @@ namespace MapTool {
             btnRotate.Enabled = false;
         }
 
+        private void MainForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F)
+            {
+                if (clbLayers.SelectedItems.Count <= 0)
+                {
+                    MessageBox.Show("Select a layer first");
+                    return;
+                }
+
+                Point mousePos = panelMap.PointToClient(Cursor.Position);
+                Point logicalPoint = coorConverter.ScreenToLogical(mousePos);
+                polygonPoints.Add(logicalPoint);
+                isPolygonMode = true;
+                panelMap.Invalidate();
+                e.Handled = true;
+            }
+
+            if (e.KeyCode == Keys.G)
+            {
+                if (polygonPoints.Count >= 3)
+                {
+                    mapEditor.FillPolygon(polygonPoints);
+                    polygonPoints.Clear();
+                    isPolygonMode = false;
+                    UpdatePanelMap();
+                }
+                e.Handled = true;
+            }
+
+            if (e.KeyCode == Keys.Escape)
+            {
+                // Cancel polygon mode
+                polygonPoints.Clear();
+                isPolygonMode = false;
+                panelMap.Invalidate();
+                e.Handled = true;
+            }
+        }
         private void label1_Click(object sender, EventArgs e) {
         }
 
@@ -501,6 +546,29 @@ namespace MapTool {
                         sharedContext.BrushSize * sharedContext.CellSize);
                 }
             }
+            if (isPolygonMode && polygonPoints.Count > 0)
+            {
+                using (Pen pen = new Pen(Color.Yellow, 2))
+                {
+                    // Draw points
+                    foreach (Point logicalPt in polygonPoints)
+                    {
+                        Point screenPt = coorConverter.LogicalToScreen(logicalPt);
+                        e.Graphics.FillEllipse(Brushes.Yellow, screenPt.X - 3, screenPt.Y - 3, 6, 6);
+                    }
+
+                    // Draw lines connecting points
+                    if (polygonPoints.Count > 1)
+                    {
+                        for (int i = 0; i < polygonPoints.Count - 1; i++)
+                        {
+                            Point p1 = coorConverter.LogicalToScreen(polygonPoints[i]);
+                            Point p2 = coorConverter.LogicalToScreen(polygonPoints[i + 1]);
+                            e.Graphics.DrawLine(pen, p1, p2);
+                        }
+                    }
+                }
+            }
         }
 
         private void btnLoadBG_Click(object sender, EventArgs e) {
@@ -544,19 +612,7 @@ namespace MapTool {
 
                                 bgImageWidth = BeforeConsiderRatio_bgImageWidth;
                                 bgImageHeight = BeforeConsiderRatio_bgImageHeight;
-                                //float aspectRatio = (float)bgImageWidth / bgImageHeight;
-                                //if (aspectRatio > 1)
-                                //{
-                                //    bgImageWidth = BeforeConsiderRatio_bgImageWidth;
-                                //    bgImageHeight = (int)(BeforeConsiderRatio_bgImageWidth / aspectRatio);
-
-                                //} else
-                                //{
-                                //    bgImageHeight = BeforeConsiderRatio_bgImageHeight;
-                                //    bgImageWidth = (int)(BeforeConsiderRatio_bgImageWidth * aspectRatio);
-                                //}
-                                //Now we need to consider ratio and set bgImageWidth, bgImageHeight again
-                            }
+                             }
 
                             if (configForm.HasPosition)
                             {
@@ -642,6 +698,168 @@ namespace MapTool {
         {
             showHoverPreview = false;
             panelMap.Invalidate();
+        }
+
+        private void btnLoadFolder_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                folderBrowserDialog.Description = "Select folder containing blur.txt, obs.txt, Size.txt, and background image";
+                folderBrowserDialog.SelectedPath = @"C:\Users\admin\Downloads\38833FF26BA1D.UnigramPreview_g9c9v27vpyspw!App\Result";
+                if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string folderPath = folderBrowserDialog.SelectedPath;
+                    string blurPath = Path.Combine(folderPath, "blur.txt");
+                    string obsPath = Path.Combine(folderPath, "obs.txt");
+                    string sizePath = Path.Combine(folderPath, "Size.txt");
+
+                    // Validate that all required files exist
+                    if (!File.Exists(blurPath))
+                    {
+                        MessageBox.Show("blur.txt not found in the selected folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (!File.Exists(obsPath))
+                    {
+                        MessageBox.Show("obs.txt not found in the selected folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    if (!File.Exists(sizePath))
+                    {
+                        MessageBox.Show("Size.txt not found in the selected folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Find background image in folder
+                    string[] imageExtensions = { "*.bmp", "*.jpg", "*.jpeg", "*.png", "*.gif" };
+                    string backgroundImagePath = null;
+
+                    foreach (string extension in imageExtensions)
+                    {
+                        string[] foundFiles = Directory.GetFiles(folderPath, extension);
+                        if (foundFiles.Length > 0)
+                        {
+                            backgroundImagePath = foundFiles[0];
+                            break;
+                        }
+                    }
+
+                    if (string.IsNullOrEmpty(backgroundImagePath))
+                    {
+                        MessageBox.Show("No background image found in the selected folder.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Read dimensions from Size.txt (format: "width x height")
+                    int mapWidth = 0;
+                    int mapHeight = 0;
+                    try
+                    {
+                        string sizeText = File.ReadAllText(sizePath).Trim();
+                        string[] parts = sizeText.Split(new[] { 'x', 'X' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        if (parts.Length >= 2)
+                        {
+                            mapWidth = int.Parse(parts[0].Trim());
+                            mapHeight = int.Parse(parts[1].Trim());
+                        }
+                        else
+                        {
+                            MessageBox.Show("Size.txt must be in format: width x height (e.g., 14576 x 7024)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error reading Size.txt: {ex.Message}\nExpected format: width x height (e.g., 14576 x 7024)", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (mapWidth <= 0 || mapHeight <= 0)
+                    {
+                        MessageBox.Show("Invalid dimensions in Size.txt. Width and height must be positive integers.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // Load the two files
+                    List<MapLayer> mapLayerToAddToMapManager = new List<MapLayer>();
+
+                    try
+                    {
+                        // Load blur.txt
+                        byte[] blurBuffer = File.ReadAllBytes(blurPath);
+                        MapLayer blurLayer = new MapLayer("blur", mapHeight, mapWidth, true);
+                        blurLayer.Data.FromBytes(blurBuffer);
+                        blurLayer.Rotate(90);
+                        mapLayerToAddToMapManager.Add(blurLayer);
+
+                        // Load obs.txt
+                        byte[] obsBuffer = File.ReadAllBytes(obsPath);
+                        MapLayer obsLayer = new MapLayer("obs", mapHeight, mapWidth, true);
+                        obsLayer.Data.FromBytes(obsBuffer);
+                        obsLayer.Rotate(90);
+                        mapLayerToAddToMapManager.Add(obsLayer);
+
+                        // Add layers to manager
+                        mapLayerManager.AddLayers(mapLayerToAddToMapManager);
+
+                        // Load background image - EXACT COPY of btnLoadBG_Click logic
+                        if (backgroundImage != null)
+                            backgroundImage.Dispose();
+                        // Simulating the configForm logic with Size.txt dimensions
+                        // This is equivalent to: configForm.ImgWidth = mapWidth, configForm.ImgHeight = mapHeight
+                        bgImageWidth = mapWidth;
+                        bgImageHeight = mapHeight;
+                        if (clbLayers.Items.Count > 0)
+                        {
+                            sharedContext.CurrentLayer = mapLayerManager.GetLayer(clbLayers.Items[0].ToString());
+                        }
+                        sharedContext.CurrentLayer.setMapDimensions(bgImageWidth, bgImageHeight);
+                        int BeforeConsiderRatio_bgImageWidth = sharedContext.CurrentLayer.mapContentHeight;
+                        int BeforeConsiderRatio_bgImageHeight = sharedContext.CurrentLayer.mapContentWidth;
+                        bgImageWidth = BeforeConsiderRatio_bgImageWidth;
+                        bgImageHeight = BeforeConsiderRatio_bgImageHeight;
+                        // No position from Size.txt, so auto-generate
+                        autoGeneratePosBGImage = true;
+
+                        // Load and resize the image
+                        Image originalImage = Image.FromFile(backgroundImagePath);
+                        backgroundImage = ResizeImage(originalImage, bgImageWidth, bgImageHeight);
+                        originalImage.Dispose(); // Dispose the original high-res image
+
+                        panelMap.Invalidate();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading files: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
+
+        public Image ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceCopy;
+                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new System.Drawing.Imaging.ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(System.Drawing.Drawing2D.WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
         }
     }
 }

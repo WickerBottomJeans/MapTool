@@ -36,7 +36,15 @@
             this.btnRemoveLayer = new System.Windows.Forms.Button();
             this.clbLayers = new System.Windows.Forms.CheckedListBox();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnBrush = new System.Windows.Forms.Button();
+            this.btnEraser = new System.Windows.Forms.Button();
+            this.btnDrawRect = new System.Windows.Forms.Button();
+            this.btnDrawLine = new System.Windows.Forms.Button();
+            this.btnBucket = new System.Windows.Forms.Button();
+            this.btnRotate = new System.Windows.Forms.Button();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
+            this.btnReloadBitmap = new System.Windows.Forms.Button();
+            this.btnXOR = new System.Windows.Forms.Button();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.btnZoomIn = new System.Windows.Forms.Button();
@@ -47,14 +55,7 @@
             this.panelMap = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnBrush = new System.Windows.Forms.Button();
-            this.btnEraser = new System.Windows.Forms.Button();
-            this.btnDrawRect = new System.Windows.Forms.Button();
-            this.btnDrawLine = new System.Windows.Forms.Button();
-            this.btnBucket = new System.Windows.Forms.Button();
-            this.btnRotate = new System.Windows.Forms.Button();
-            this.btnReloadBitmap = new System.Windows.Forms.Button();
-            this.btnXOR = new System.Windows.Forms.Button();
+            this.btnLoadFolder = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
@@ -71,6 +72,7 @@
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.AntiqueWhite;
             this.flowLayoutPanel1.Controls.Add(this.btnLoadFile);
+            this.flowLayoutPanel1.Controls.Add(this.btnLoadFolder);
             this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel1);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -98,7 +100,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.btnFLP, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.clbLayers, 0, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 39);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 75);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -218,10 +220,91 @@
             this.flowLayoutPanel2.Controls.Add(this.btnXOR);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel3);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel5);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 329);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 365);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(231, 318);
             this.flowLayoutPanel2.TabIndex = 3;
+            // 
+            // btnBrush
+            // 
+            this.btnBrush.AutoSize = true;
+            this.btnBrush.Image = ((System.Drawing.Image)(resources.GetObject("btnBrush.Image")));
+            this.btnBrush.Location = new System.Drawing.Point(3, 3);
+            this.btnBrush.Name = "btnBrush";
+            this.btnBrush.Size = new System.Drawing.Size(69, 65);
+            this.btnBrush.TabIndex = 0;
+            this.btnBrush.Text = "Brush";
+            this.btnBrush.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnBrush.UseVisualStyleBackColor = true;
+            this.btnBrush.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // btnEraser
+            // 
+            this.btnEraser.AutoSize = true;
+            this.btnEraser.Image = ((System.Drawing.Image)(resources.GetObject("btnEraser.Image")));
+            this.btnEraser.Location = new System.Drawing.Point(78, 3);
+            this.btnEraser.Name = "btnEraser";
+            this.btnEraser.Size = new System.Drawing.Size(69, 65);
+            this.btnEraser.TabIndex = 1;
+            this.btnEraser.Text = "Eraser";
+            this.btnEraser.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnEraser.UseVisualStyleBackColor = true;
+            this.btnEraser.Click += new System.EventHandler(this.btnEraser_Click);
+            // 
+            // btnDrawRect
+            // 
+            this.btnDrawRect.AutoSize = true;
+            this.btnDrawRect.BackColor = System.Drawing.Color.Transparent;
+            this.btnDrawRect.Image = global::MapTool.Properties.Resources.DrawRectIco;
+            this.btnDrawRect.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnDrawRect.Location = new System.Drawing.Point(153, 3);
+            this.btnDrawRect.Name = "btnDrawRect";
+            this.btnDrawRect.Size = new System.Drawing.Size(69, 65);
+            this.btnDrawRect.TabIndex = 2;
+            this.btnDrawRect.Text = "Rect";
+            this.btnDrawRect.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnDrawRect.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnDrawRect.UseVisualStyleBackColor = false;
+            this.btnDrawRect.Click += new System.EventHandler(this.btnDrawRect_Click);
+            // 
+            // btnDrawLine
+            // 
+            this.btnDrawLine.AutoSize = true;
+            this.btnDrawLine.Image = ((System.Drawing.Image)(resources.GetObject("btnDrawLine.Image")));
+            this.btnDrawLine.Location = new System.Drawing.Point(3, 74);
+            this.btnDrawLine.Name = "btnDrawLine";
+            this.btnDrawLine.Size = new System.Drawing.Size(69, 65);
+            this.btnDrawLine.TabIndex = 3;
+            this.btnDrawLine.Text = "Line";
+            this.btnDrawLine.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnDrawLine.UseVisualStyleBackColor = true;
+            this.btnDrawLine.Click += new System.EventHandler(this.btnDrawLine_Click);
+            // 
+            // btnBucket
+            // 
+            this.btnBucket.AutoSize = true;
+            this.btnBucket.Image = ((System.Drawing.Image)(resources.GetObject("btnBucket.Image")));
+            this.btnBucket.Location = new System.Drawing.Point(78, 74);
+            this.btnBucket.Name = "btnBucket";
+            this.btnBucket.Size = new System.Drawing.Size(69, 65);
+            this.btnBucket.TabIndex = 4;
+            this.btnBucket.Text = "Bucket";
+            this.btnBucket.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnBucket.UseVisualStyleBackColor = true;
+            this.btnBucket.Click += new System.EventHandler(this.btnBucket_Click);
+            // 
+            // btnRotate
+            // 
+            this.btnRotate.AutoSize = true;
+            this.btnRotate.Image = ((System.Drawing.Image)(resources.GetObject("btnRotate.Image")));
+            this.btnRotate.Location = new System.Drawing.Point(153, 74);
+            this.btnRotate.Name = "btnRotate";
+            this.btnRotate.Size = new System.Drawing.Size(69, 65);
+            this.btnRotate.TabIndex = 8;
+            this.btnRotate.Text = "Rotate";
+            this.btnRotate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnRotate.UseVisualStyleBackColor = true;
+            this.btnRotate.Click += new System.EventHandler(this.btnRotate_Click);
             // 
             // flowLayoutPanel4
             // 
@@ -230,6 +313,39 @@
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
             this.flowLayoutPanel4.Size = new System.Drawing.Size(0, 0);
             this.flowLayoutPanel4.TabIndex = 5;
+            // 
+            // btnReloadBitmap
+            // 
+            this.btnReloadBitmap.AutoSize = true;
+            this.btnReloadBitmap.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.btnReloadBitmap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnReloadBitmap.Image = global::MapTool.Properties.Resources.ReloadIco__1_;
+            this.btnReloadBitmap.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnReloadBitmap.Location = new System.Drawing.Point(3, 145);
+            this.btnReloadBitmap.Name = "btnReloadBitmap";
+            this.btnReloadBitmap.Size = new System.Drawing.Size(70, 70);
+            this.btnReloadBitmap.TabIndex = 7;
+            this.btnReloadBitmap.Text = "Reload";
+            this.btnReloadBitmap.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnReloadBitmap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnReloadBitmap.UseVisualStyleBackColor = true;
+            this.btnReloadBitmap.Click += new System.EventHandler(this.btnReloadBitmap_Click);
+            // 
+            // btnXOR
+            // 
+            this.btnXOR.AutoSize = true;
+            this.btnXOR.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnXOR.Image = ((System.Drawing.Image)(resources.GetObject("btnXOR.Image")));
+            this.btnXOR.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnXOR.Location = new System.Drawing.Point(79, 145);
+            this.btnXOR.Name = "btnXOR";
+            this.btnXOR.Size = new System.Drawing.Size(70, 70);
+            this.btnXOR.TabIndex = 9;
+            this.btnXOR.Text = "XOR";
+            this.btnXOR.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnXOR.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnXOR.UseVisualStyleBackColor = true;
+            this.btnXOR.Click += new System.EventHandler(this.btnXOR_Click);
             // 
             // flowLayoutPanel3
             // 
@@ -352,119 +468,16 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
-            // btnBrush
+            // btnLoadFolder
             // 
-            this.btnBrush.AutoSize = true;
-            this.btnBrush.Image = ((System.Drawing.Image)(resources.GetObject("btnBrush.Image")));
-            this.btnBrush.Location = new System.Drawing.Point(3, 3);
-            this.btnBrush.Name = "btnBrush";
-            this.btnBrush.Size = new System.Drawing.Size(69, 65);
-            this.btnBrush.TabIndex = 0;
-            this.btnBrush.Text = "Brush";
-            this.btnBrush.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnBrush.UseVisualStyleBackColor = true;
-            this.btnBrush.Click += new System.EventHandler(this.btnBrush_Click);
-            // 
-            // btnEraser
-            // 
-            this.btnEraser.AutoSize = true;
-            this.btnEraser.Image = ((System.Drawing.Image)(resources.GetObject("btnEraser.Image")));
-            this.btnEraser.Location = new System.Drawing.Point(78, 3);
-            this.btnEraser.Name = "btnEraser";
-            this.btnEraser.Size = new System.Drawing.Size(69, 65);
-            this.btnEraser.TabIndex = 1;
-            this.btnEraser.Text = "Eraser";
-            this.btnEraser.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnEraser.UseVisualStyleBackColor = true;
-            this.btnEraser.Click += new System.EventHandler(this.btnEraser_Click);
-            // 
-            // btnDrawRect
-            // 
-            this.btnDrawRect.AutoSize = true;
-            this.btnDrawRect.BackColor = System.Drawing.Color.Transparent;
-            this.btnDrawRect.Image = global::MapTool.Properties.Resources.DrawRectIco;
-            this.btnDrawRect.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnDrawRect.Location = new System.Drawing.Point(153, 3);
-            this.btnDrawRect.Name = "btnDrawRect";
-            this.btnDrawRect.Size = new System.Drawing.Size(69, 65);
-            this.btnDrawRect.TabIndex = 2;
-            this.btnDrawRect.Text = "Rect";
-            this.btnDrawRect.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnDrawRect.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnDrawRect.UseVisualStyleBackColor = false;
-            this.btnDrawRect.Click += new System.EventHandler(this.btnDrawRect_Click);
-            // 
-            // btnDrawLine
-            // 
-            this.btnDrawLine.AutoSize = true;
-            this.btnDrawLine.Image = ((System.Drawing.Image)(resources.GetObject("btnDrawLine.Image")));
-            this.btnDrawLine.Location = new System.Drawing.Point(3, 74);
-            this.btnDrawLine.Name = "btnDrawLine";
-            this.btnDrawLine.Size = new System.Drawing.Size(69, 65);
-            this.btnDrawLine.TabIndex = 3;
-            this.btnDrawLine.Text = "Line";
-            this.btnDrawLine.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnDrawLine.UseVisualStyleBackColor = true;
-            this.btnDrawLine.Click += new System.EventHandler(this.btnDrawLine_Click);
-            // 
-            // btnBucket
-            // 
-            this.btnBucket.AutoSize = true;
-            this.btnBucket.Image = ((System.Drawing.Image)(resources.GetObject("btnBucket.Image")));
-            this.btnBucket.Location = new System.Drawing.Point(78, 74);
-            this.btnBucket.Name = "btnBucket";
-            this.btnBucket.Size = new System.Drawing.Size(69, 65);
-            this.btnBucket.TabIndex = 4;
-            this.btnBucket.Text = "Bucket";
-            this.btnBucket.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnBucket.UseVisualStyleBackColor = true;
-            this.btnBucket.Click += new System.EventHandler(this.btnBucket_Click);
-            // 
-            // btnRotate
-            // 
-            this.btnRotate.AutoSize = true;
-            this.btnRotate.Image = ((System.Drawing.Image)(resources.GetObject("btnRotate.Image")));
-            this.btnRotate.Location = new System.Drawing.Point(153, 74);
-            this.btnRotate.Name = "btnRotate";
-            this.btnRotate.Size = new System.Drawing.Size(69, 65);
-            this.btnRotate.TabIndex = 8;
-            this.btnRotate.Text = "Rotate";
-            this.btnRotate.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnRotate.UseVisualStyleBackColor = true;
-            this.btnRotate.Click += new System.EventHandler(this.btnRotate_Click);
-            // 
-            // btnReloadBitmap
-            // 
-            this.btnReloadBitmap.AutoSize = true;
-            this.btnReloadBitmap.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnReloadBitmap.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnReloadBitmap.Image = global::MapTool.Properties.Resources.ReloadIco__1_;
-            this.btnReloadBitmap.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnReloadBitmap.Location = new System.Drawing.Point(3, 145);
-            this.btnReloadBitmap.Name = "btnReloadBitmap";
-            this.btnReloadBitmap.Size = new System.Drawing.Size(70, 70);
-            this.btnReloadBitmap.TabIndex = 7;
-            this.btnReloadBitmap.Text = "Reload";
-            this.btnReloadBitmap.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnReloadBitmap.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnReloadBitmap.UseVisualStyleBackColor = true;
-            this.btnReloadBitmap.Click += new System.EventHandler(this.btnReloadBitmap_Click);
-            // 
-            // btnXOR
-            // 
-            this.btnXOR.AutoSize = true;
-            this.btnXOR.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnXOR.Image = ((System.Drawing.Image)(resources.GetObject("btnXOR.Image")));
-            this.btnXOR.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnXOR.Location = new System.Drawing.Point(79, 145);
-            this.btnXOR.Name = "btnXOR";
-            this.btnXOR.Size = new System.Drawing.Size(70, 70);
-            this.btnXOR.TabIndex = 9;
-            this.btnXOR.Text = "XOR";
-            this.btnXOR.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnXOR.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnXOR.UseVisualStyleBackColor = true;
-            this.btnXOR.Click += new System.EventHandler(this.btnXOR_Click);
+            this.btnLoadFolder.AutoSize = true;
+            this.btnLoadFolder.Location = new System.Drawing.Point(3, 39);
+            this.btnLoadFolder.Name = "btnLoadFolder";
+            this.btnLoadFolder.Size = new System.Drawing.Size(299, 30);
+            this.btnLoadFolder.TabIndex = 6;
+            this.btnLoadFolder.Text = "Load folder";
+            this.btnLoadFolder.UseVisualStyleBackColor = true;
+            this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
             // 
             // mainForm
             // 
@@ -529,6 +542,7 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown nudBrushSize;
         private System.Windows.Forms.Button btnXOR;
+        private System.Windows.Forms.Button btnLoadFolder;
     }
 }
 
