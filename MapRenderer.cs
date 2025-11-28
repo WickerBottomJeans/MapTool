@@ -35,8 +35,36 @@ namespace MapTool {
             coorConverter = new CoorConverter(context);
         }
 
+
         protected virtual void OnMapDrawingFinished() {
             MapDrawingFinished?.Invoke(this, EventArgs.Empty);
+        }
+
+        public bool CanRenderAtCellSize(int cellSize, List<MapLayer> layers)
+        {
+            if (layers.Count == 0) return true;
+
+            try
+            {
+                int width = layers.Max(l => l.Data.GetLength(1)) * cellSize;
+                int height = layers.Max(l => l.Data.GetLength(0)) * cellSize;
+
+                // Just try to create it - if it fails, we know it won't work
+                using (var testBitmap = new Bitmap(width, height))
+                {
+                    // Success! Dispose immediately, we just needed to test
+                }
+
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                return false; // Invalid dimensions
+            }
+            catch (OutOfMemoryException)
+            {
+                return false; // Too big
+            }
         }
 
         //It render ontop of the previous bitmap

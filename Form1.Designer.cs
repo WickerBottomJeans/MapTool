@@ -56,6 +56,7 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnLoadFolder = new System.Windows.Forms.Button();
+            this.btnSelectRegion = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
@@ -218,11 +219,12 @@
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel4);
             this.flowLayoutPanel2.Controls.Add(this.btnReloadBitmap);
             this.flowLayoutPanel2.Controls.Add(this.btnXOR);
+            this.flowLayoutPanel2.Controls.Add(this.btnSelectRegion);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel3);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel5);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 365);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(231, 318);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(296, 318);
             this.flowLayoutPanel2.TabIndex = 3;
             // 
             // btnBrush
@@ -479,6 +481,22 @@
             this.btnLoadFolder.UseVisualStyleBackColor = true;
             this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
             // 
+            // btnSelectRegion
+            // 
+            this.btnSelectRegion.AutoSize = true;
+            this.btnSelectRegion.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnSelectRegion.Image = ((System.Drawing.Image)(resources.GetObject("btnSelectRegion.Image")));
+            this.btnSelectRegion.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnSelectRegion.Location = new System.Drawing.Point(155, 145);
+            this.btnSelectRegion.Name = "btnSelectRegion";
+            this.btnSelectRegion.Size = new System.Drawing.Size(138, 70);
+            this.btnSelectRegion.TabIndex = 10;
+            this.btnSelectRegion.Text = "Select";
+            this.btnSelectRegion.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnSelectRegion.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnSelectRegion.UseVisualStyleBackColor = true;
+            this.btnSelectRegion.Click += new System.EventHandler(this.btnSelectRegion_Click);
+            // 
             // mainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -543,6 +561,7 @@
         private System.Windows.Forms.NumericUpDown nudBrushSize;
         private System.Windows.Forms.Button btnXOR;
         private System.Windows.Forms.Button btnLoadFolder;
+        private System.Windows.Forms.Button btnSelectRegion;
     }
 }
 

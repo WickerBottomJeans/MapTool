@@ -53,6 +53,17 @@ namespace MapTool {
         //convex hull
         private List<Point> polygonPoints = new List<Point>();
         private bool isPolygonMode = false;
+
+        //selecting stuff
+        private bool selectionModeEnabled = false;
+        private bool isSelecting = false;
+        private Point selectionStart;
+        private Point selectionEnd;
+        private bool hasSelection = false;
+        private bool isMovingSelection = false;
+        private Point moveStartPoint;
+        private byte[,] copiedRegionData = null; // Store the cut data
+
         public mainForm() {
             InitializeComponent();
 
@@ -193,7 +204,22 @@ namespace MapTool {
                 MessageBox.Show("Select a layer first");
                 return;
             }
+            if (selectionModeEnabled && hasSelection && isMovingSelection && e.Button == MouseButtons.Left)
+            {
+                moveStartPoint = coorConverter.ScreenToLogical(e.Location);
+                return;
+            }
 
+            // Handle new selection
+            if (selectionModeEnabled && e.Button == MouseButtons.Left)
+            {
+                isSelecting = true;
+                hasSelection = false;
+                selectionStart = coorConverter.ScreenToLogical(e.Location);
+                selectionEnd = selectionStart;
+                panelMap.Invalidate();
+                return;
+            }
             if (sharedContext.CurrentTool == ToolMode.Rect) {
                 isDrawingRect = true;
                 sharedContext.rectScreenEndPoint = e.Location;
@@ -225,6 +251,28 @@ namespace MapTool {
                 int dy = currentPoint.Y - panningStartPoint.Y;
                 sharedContext.PanOffset = new Point(sharedContext.PanOffset.X + dx, sharedContext.PanOffset.Y + dy);
                 panningStartPoint = currentPoint;
+                panelMap.Invalidate();
+                return;
+            }
+
+            if (isMovingSelection && e.Button == MouseButtons.Left)
+            {
+                Point currentPoint = coorConverter.ScreenToLogical(e.Location);
+                int deltaX = currentPoint.X - moveStartPoint.X;
+                int deltaY = currentPoint.Y - moveStartPoint.Y;
+
+                selectionStart = new Point(selectionStart.X + deltaX, selectionStart.Y + deltaY);
+                selectionEnd = new Point(selectionEnd.X + deltaX, selectionEnd.Y + deltaY);
+                moveStartPoint = currentPoint;
+
+                panelMap.Invalidate();
+                return;
+            }
+
+            // Handle region selection dragging
+            if (isSelecting)
+            {
+                selectionEnd = coorConverter.ScreenToLogical(e.Location);
                 panelMap.Invalidate();
                 return;
             }
@@ -266,6 +314,48 @@ namespace MapTool {
                 mapEditor.DrawRect();
                 UpdatePanelMap();
             }
+
+            if (isSelecting)
+            {
+                isSelecting = false;
+                selectionEnd = coorConverter.ScreenToLogical(e.Location);
+
+                int width = Math.Abs(selectionEnd.X - selectionStart.X);
+                int height = Math.Abs(selectionEnd.Y - selectionStart.Y);
+
+                if (width > 0 && height > 0)
+                {
+                    hasSelection = true;
+                }
+
+                panelMap.Invalidate();
+                return;
+            }
+
+            // Stop moving selection - paste the data
+            if (isMovingSelection)
+            {
+                isMovingSelection = false;
+                panelMap.Cursor = selectionModeEnabled ? Cursors.Cross : Cursors.Default;
+
+                // Paste at new location
+                int x = Math.Min(selectionStart.X, selectionEnd.X);
+                int y = Math.Min(selectionStart.Y, selectionEnd.Y);
+                PasteRegion(x, y, copiedRegionData);
+                copiedRegionData = null;
+
+                UpdatePanelMap();
+                return;
+            }
+
+            // Stop moving selection
+            if (isMovingSelection)
+            {
+                isMovingSelection = false;
+                panelMap.Invalidate();
+                return;
+            }
+
             if (isDrawing) {
                 isDrawing = false;
                 mapEditor.DrawAt(coorConverter.ScreenToLogical(e.Location));
@@ -398,6 +488,47 @@ namespace MapTool {
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
+            if (selectionModeEnabled && hasSelection && clbLayers.SelectedItem != null)
+            {
+                int x = Math.Min(selectionStart.X, selectionEnd.X);
+                int y = Math.Min(selectionStart.Y, selectionEnd.Y);
+                int width = Math.Abs(selectionEnd.X - selectionStart.X);
+                int height = Math.Abs(selectionEnd.Y - selectionStart.Y);
+
+                if (e.KeyCode == Keys.L)
+                {
+                    // Rotate left (counter-clockwise) = 270 or -90
+                    sharedContext.CurrentLayer.RotateRegion(x, y, width, height, 270);
+                    UpdatePanelMap();
+                    e.Handled = true;
+                    return;
+                }
+                else if (e.KeyCode == Keys.R)
+                {
+                    // Rotate right (clockwise) = 90
+                    sharedContext.CurrentLayer.RotateRegion(x, y, width, height, 90);
+                    UpdatePanelMap();
+                    e.Handled = true;
+                    return;
+                }
+                else if (e.KeyCode == Keys.M)
+                {
+                    // Enter move mode - cut the data
+                    if (!isMovingSelection)
+                    {
+                        isMovingSelection = true;
+                        panelMap.Cursor = Cursors.SizeAll;
+
+                        // Cut the region data
+                        copiedRegionData = CutRegion(x, y, width, height);
+                        UpdatePanelMap();
+                    }
+                    e.Handled = true;
+                    return;
+                }
+            }
+
+            // Existing polygon mode code
             if (e.KeyCode == Keys.F)
             {
                 if (clbLayers.SelectedItems.Count <= 0)
@@ -428,11 +559,70 @@ namespace MapTool {
 
             if (e.KeyCode == Keys.Escape)
             {
-                // Cancel polygon mode
-                polygonPoints.Clear();
-                isPolygonMode = false;
+                // Cancel polygon mode OR selection mode
+                if (isPolygonMode)
+                {
+                    polygonPoints.Clear();
+                    isPolygonMode = false;
+                }
+                if (selectionModeEnabled)
+                {
+                    hasSelection = false;
+                    isMovingSelection = false;
+                }
                 panelMap.Invalidate();
                 e.Handled = true;
+            }
+        }
+
+
+        // Add method to cut a region
+        private byte[,] CutRegion(int startX, int startY, int width, int height)
+        {
+            if (sharedContext.CurrentLayer?.Data == null) return null;
+
+            byte[,] cutData = new byte[height, width];
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int sourceY = startY + y;
+                    int sourceX = startX + x;
+
+                    if (sourceY >= 0 && sourceY < sharedContext.CurrentLayer.Data.GetLength(0) &&
+                        sourceX >= 0 && sourceX < sharedContext.CurrentLayer.Data.GetLength(1))
+                    {
+                        cutData[y, x] = sharedContext.CurrentLayer.Data[sourceY, sourceX];
+                        sharedContext.CurrentLayer.Data[sourceY, sourceX] = 0; // Clear original
+                    }
+                }
+            }
+
+            return cutData;
+        }
+
+        // Add method to paste the region
+        private void PasteRegion(int startX, int startY, byte[,] data)
+        {
+            if (sharedContext.CurrentLayer?.Data == null || data == null) return;
+
+            int height = data.GetLength(0);
+            int width = data.GetLength(1);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int targetY = startY + y;
+                    int targetX = startX + x;
+
+                    if (targetY >= 0 && targetY < sharedContext.CurrentLayer.Data.GetLength(0) &&
+                        targetX >= 0 && targetX < sharedContext.CurrentLayer.Data.GetLength(1))
+                    {
+                        sharedContext.CurrentLayer.Data[targetY, targetX] = data[y, x];
+                    }
+                }
             }
         }
         private void label1_Click(object sender, EventArgs e) {
@@ -456,32 +646,39 @@ namespace MapTool {
             }
         }
 
-        private void PanelMap_MouseWheel(object sender, MouseEventArgs e) {
+        private void PanelMap_MouseWheel(object sender, MouseEventArgs e)
+        {
             Point mousePosition = e.Location;
 
-            Point logicalBeforeZoom = coorConverter.ScreenToLogical(mousePosition);
-            int previousCellSize = sharedContext.CellSize;
+            int proposedCellSize = sharedContext.CellSize;
+            if (e.Delta > 0 && proposedCellSize < sharedContext.maxZoomInValue)
+                proposedCellSize++;
+            else if (e.Delta < 0 && proposedCellSize > 1)
+                proposedCellSize--;
 
-            if (e.Delta > 0 && sharedContext.CellSize < sharedContext.maxZoomInValue)
-                sharedContext.CellSize++;
-            else if (e.Delta < 0 && sharedContext.CellSize > 1)
-                sharedContext.CellSize--;
+            if (proposedCellSize != sharedContext.CellSize)
+            {
+                // B tries first - can it render at this size?
+                if (mapRenderer.CanRenderAtCellSize(proposedCellSize, GetVisibleLayers()))
+                {
+                    // B said yes, NOW A changes state
+                    Point logicalBeforeZoom = coorConverter.ScreenToLogical(mousePosition);
+                    sharedContext.CellSize = proposedCellSize;
+                    Point screenAfterZoom = coorConverter.LogicalToScreen(logicalBeforeZoom);
 
-            if (sharedContext.CellSize != previousCellSize) {
-                Point screenAfterZoom = coorConverter.LogicalToScreen(logicalBeforeZoom);
+                    int deltaX = mousePosition.X - screenAfterZoom.X;
+                    int deltaY = mousePosition.Y - screenAfterZoom.Y;
+                    sharedContext.PanOffset = new Point(
+                        sharedContext.PanOffset.X + deltaX,
+                        sharedContext.PanOffset.Y + deltaY
+                    );
 
-                int deltaX = mousePosition.X - screenAfterZoom.X;
-                int deltaY = mousePosition.Y - screenAfterZoom.Y;
-
-                sharedContext.PanOffset = new Point(
-                    sharedContext.PanOffset.X + deltaX,
-                    sharedContext.PanOffset.Y + deltaY
-                );
-
-                UpdatePanelMap();
+                    UpdatePanelMap();
+                }
+                // else: silently ignore the zoom (already at limit)
             }
         }
-
+        
         private void btnBucket_Click(object sender, EventArgs e) {
             sharedContext.CurrentTool = ToolMode.Fill;
         }
@@ -569,6 +766,38 @@ namespace MapTool {
                     }
                 }
             }
+            if ((isSelecting || hasSelection) && selectionStart != Point.Empty)
+            {
+                Point screenStart = coorConverter.LogicalToScreen(selectionStart);
+                Point screenEnd = coorConverter.LogicalToScreen(selectionEnd);
+
+                Rectangle rect = new Rectangle(
+                    Math.Min(screenStart.X, screenEnd.X),
+                    Math.Min(screenStart.Y, screenEnd.Y),
+                    Math.Abs(screenEnd.X - screenStart.X),
+                    Math.Abs(screenEnd.Y - screenStart.Y)
+                );
+
+                // Use different colors based on mode
+                Color penColor = isMovingSelection ? Color.Green : Color.Cyan;
+                using (Pen pen = new Pen(penColor, 2))
+                {
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                    e.Graphics.DrawRectangle(pen, rect);
+                }
+
+                // Show mode hint
+                if (hasSelection)
+                {
+                    string hint = isMovingSelection ? "MOVING (drag to move)" : "Press M to move, L/R to rotate";
+                    using (Font font = new Font("Arial", 10))
+                    using (Brush brush = new SolidBrush(Color.Yellow))
+                    {
+                        e.Graphics.DrawString(hint, font, brush, rect.X, rect.Y - 20);
+                    }
+                }
+            }
+
         }
 
         private void btnLoadBG_Click(object sender, EventArgs e) {
@@ -860,6 +1089,24 @@ namespace MapTool {
             }
 
             return destImage;
+        }
+
+        private void btnSelectRegion_Click(object sender, EventArgs e)
+        {
+            selectionModeEnabled = !selectionModeEnabled;
+
+            btnSelectRegion.BackColor = selectionModeEnabled ? Color.LightBlue : SystemColors.Control;
+            btnSelectRegion.Text = selectionModeEnabled ? "Cancel Selection" : "Select Region to Rotate";
+
+            panelMap.Cursor = selectionModeEnabled ? Cursors.Cross : Cursors.Default;
+
+            if (!selectionModeEnabled)
+            {
+                isSelecting = false;
+                hasSelection = false;
+                isMovingSelection = false;
+                panelMap.Invalidate();
+            }
         }
     }
 }

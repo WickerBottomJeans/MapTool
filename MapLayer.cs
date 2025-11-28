@@ -106,6 +106,115 @@ namespace MapTool {
             Data = rotatedMap;
         }
 
+        public void RotateRegion(int startX, int startY, int width, int height, int degrees)
+        {
+            if (Data == null) return;
+
+            // 1. Extract the region
+            byte[,] region = new byte[height, width];
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int sourceY = startY + y;
+                    int sourceX = startX + x;
+                    if (sourceY >= 0 && sourceY < Data.GetLength(0) &&
+                        sourceX >= 0 && sourceX < Data.GetLength(1))
+                    {
+                        region[y, x] = Data[sourceY, sourceX];
+                    }
+                }
+            }
+
+            // 2. Rotate the extracted region
+            byte[,] rotatedRegion = RotateArray(region, degrees);
+
+            // 3. Clear the original region
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int targetY = startY + y;
+                    int targetX = startX + x;
+                    if (targetY >= 0 && targetY < Data.GetLength(0) &&
+                        targetX >= 0 && targetX < Data.GetLength(1))
+                    {
+                        Data[targetY, targetX] = 0;
+                    }
+                }
+            }
+
+            // 4. Paste rotated region back (centered on original position)
+            int rotatedHeight = rotatedRegion.GetLength(0);
+            int rotatedWidth = rotatedRegion.GetLength(1);
+            int offsetX = (width - rotatedWidth) / 2;
+            int offsetY = (height - rotatedHeight) / 2;
+
+            for (int y = 0; y < rotatedHeight; y++)
+            {
+                for (int x = 0; x < rotatedWidth; x++)
+                {
+                    int targetY = startY + offsetY + y;
+                    int targetX = startX + offsetX + x;
+                    if (targetY >= 0 && targetY < Data.GetLength(0) &&
+                        targetX >= 0 && targetX < Data.GetLength(1))
+                    {
+                        Data[targetY, targetX] = rotatedRegion[y, x];
+                    }
+                }
+            }
+        }
+
+        private byte[,] RotateArray(byte[,] array, int degrees)
+        {
+            int originalHeight = array.GetLength(0);
+            int originalWidth = array.GetLength(1);
+            byte[,] rotated;
+
+            if (degrees == 90 || degrees == 270 || degrees == -90)
+            {
+                // Dimensions swap
+                rotated = new byte[originalWidth, originalHeight];
+            }
+            else
+            {
+                rotated = new byte[originalHeight, originalWidth];
+            }
+
+            if (degrees == 90)
+            {
+                for (int y = 0; y < originalHeight; y++)
+                {
+                    for (int x = 0; x < originalWidth; x++)
+                    {
+                        rotated[originalWidth - 1 - x, y] = array[y, x];
+                    }
+                }
+            }
+            else if (degrees == 180)
+            {
+                for (int y = 0; y < originalHeight; y++)
+                {
+                    for (int x = 0; x < originalWidth; x++)
+                    {
+                        rotated[originalHeight - 1 - y, originalWidth - 1 - x] = array[y, x];
+                    }
+                }
+            }
+            else if (degrees == 270 || degrees == -90)
+            {
+                for (int y = 0; y < originalHeight; y++)
+                {
+                    for (int x = 0; x < originalWidth; x++)
+                    {
+                        rotated[x, originalHeight - 1 - y] = array[y, x];
+                    }
+                }
+            }
+
+            return rotated;
+        }
+
         public void Crop(int newHeight, int newWidth) {
             if (newWidth <= 0 || newHeight <= 0) {
                 MessageBox.Show("Invalid dimensions for cropping.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
