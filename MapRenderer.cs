@@ -94,50 +94,102 @@ namespace MapTool {
             OnMapDrawingFinished();
         }
 
-        public void RenderLayers(List<MapLayer> mapLayersToRender) {
-            if (mapLayersToRender.Count == 0) {
-                if (cachedBitmap != null) {
-                    using (Graphics g = Graphics.FromImage(cachedBitmap)) {
+        public void RenderLayers(List<MapLayer> mapLayersToRender)
+        {
+            if (mapLayersToRender.Count == 0)
+            {
+                if (cachedBitmap != null)
+                {
+                    using (Graphics g = Graphics.FromImage(cachedBitmap))
+                    {
                         g.Clear(context.PanelBackColor);
                     }
                     OnMapDrawingFinished();
                 }
                 return;
             }
-
             int bitmapWidth = mapLayersToRender.Max(l => l.Data.GetLength(1)) * Context.CellSize;
             int bitmapHeight = mapLayersToRender.Max(l => l.Data.GetLength(0)) * Context.CellSize;
-
             cachedBitmap?.Dispose();
             cachedBitmap = new Bitmap(bitmapWidth, bitmapHeight);
+            using (Graphics g = Graphics.FromImage(cachedBitmap))
+            {
+                var brushCache = new Dictionary<byte, SolidBrush>();
+                try
+                {
+                    foreach (var layer in mapLayersToRender)
+                    {
+                        Color layerBaseColor = GetColorForLayer(layer.Name);
 
-            using (Graphics g = Graphics.FromImage(cachedBitmap)) {
-                var brushes = new Dictionary<string, SolidBrush>();
-                try {
-                    foreach (var layer in mapLayersToRender) {
-                        if (!brushes.ContainsKey(layer.Name)) {
-                            brushes[layer.Name] = new SolidBrush(GetColorForLayer(layer.Name));
-                        }
-                        SolidBrush brush = brushes[layer.Name];
-
-                        for (int y = 0; y < layer.Data.GetLength(0); y++) {
-                            for (int x = 0; x < layer.Data.GetLength(1); x++) {
-                                if (layer.Data[y, x] == 1) {
-                                    g.FillRectangle(brush, x * Context.CellSize, y * Context.CellSize, Context.CellSize, Context.CellSize);
+                        for (int y = 0; y < layer.Data.GetLength(0); y++)
+                        {
+                            for (int x = 0; x < layer.Data.GetLength(1); x++)
+                            {
+                                byte value = layer.Data[y, x];
+                                if (value != 0)
+                                {
+                                    if (!brushCache.ContainsKey(value))
+                                    {
+                                        // Generate different color for each byte value
+                                        brushCache[value] = new SolidBrush(GetColorForByteValue(value, layerBaseColor));
+                                    }
+                                    g.FillRectangle(brushCache[value], x * Context.CellSize, y * Context.CellSize, Context.CellSize, Context.CellSize);
                                 }
                             }
                         }
                     }
-                } finally {
-                    foreach (var brush in brushes.Values) {
+                }
+                finally
+                {
+                    foreach (var brush in brushCache.Values)
+                    {
                         brush.Dispose();
                     }
-                    brushes.Clear();
+                    brushCache.Clear();
                 }
             }
             OnMapDrawingFinished();
         }
 
+        public Color GetColorForByteValue(byte value, Color baseColor)
+        {
+            if (value == 1)
+            {
+                return baseColor; // Original layer color for value 1
+            }
+
+            // Generate distinct colors for other values (2-255)
+            // Use HSV color wheel for maximum distinction
+            float hue = (value * 137.5f) % 360; // Golden angle for good distribution
+            float saturation = 0.8f;
+            float brightness = 0.9f;
+
+            return ColorFromHSV(hue, saturation, brightness);
+        }
+
+        private Color ColorFromHSV(float hue, float saturation, float value)
+        {
+            int hi = Convert.ToInt32(Math.Floor(hue / 60)) % 6;
+            float f = hue / 60 - (float)Math.Floor(hue / 60);
+            value = value * 255;
+            int v = Convert.ToInt32(value);
+            int p = Convert.ToInt32(value * (1 - saturation));
+            int q = Convert.ToInt32(value * (1 - f * saturation));
+            int t = Convert.ToInt32(value * (1 - (1 - f) * saturation));
+
+            if (hi == 0)
+                return Color.FromArgb(255, v, t, p);
+            else if (hi == 1)
+                return Color.FromArgb(255, q, v, p);
+            else if (hi == 2)
+                return Color.FromArgb(255, p, v, t);
+            else if (hi == 3)
+                return Color.FromArgb(255, p, q, v);
+            else if (hi == 4)
+                return Color.FromArgb(255, t, p, v);
+            else
+                return Color.FromArgb(255, v, p, q);
+        }
         public void RenderLine() {
             Point lineLogicalStart = coorConverter.ScreenToLogical(Context.lineScreenStart);
             Point lineLogicalEnd = coorConverter.ScreenToLogical(Context.lineScreenEnd);
@@ -201,28 +253,35 @@ namespace MapTool {
             {
                 Point dirtyLogicalPoint = coorConverter.ScreenToLogical(dirtyScreenPoint);
                 Point dirtyBitmapPoint = coorConverter.LogicalToBitmap(dirtyLogicalPoint);
-                var brushes = new Dictionary<string, SolidBrush>();
+                var brushCache = new Dictionary<byte, SolidBrush>();
                 try
                 {
                     foreach (MapLayer layer in mapLayersToRender)
                     {
-                        if (!brushes.ContainsKey(layer.Name))
-                        {
-                            Color baseColor = GetColorForLayer(layer.Name);
-                            brushes[layer.Name] = new SolidBrush(Color.FromArgb(alphaValue, baseColor));
-                        }
-                        SolidBrush brush = brushes[layer.Name];
+                        Color layerBaseColor = GetColorForLayer(layer.Name);
+
                         for (int brushY = 0; brushY < Context.BrushSize; brushY++)
                         {
                             for (int brushX = 0; brushX < Context.BrushSize; brushX++)
                             {
                                 int logicalY = dirtyLogicalPoint.Y + brushY;
                                 int logicalX = dirtyLogicalPoint.X + brushX;
-                                if (layer.IsValidCoor(logicalX, logicalY) && layer.Data[logicalY, logicalX] == 1)
+
+                                if (layer.IsValidCoor(logicalX, logicalY))
                                 {
-                                    int screenX = dirtyBitmapPoint.X + brushX * Context.CellSize;
-                                    int screenY = dirtyBitmapPoint.Y + brushY * Context.CellSize;
-                                    g.FillRectangle(brush, screenX, screenY, Context.CellSize, Context.CellSize);
+                                    byte value = layer.Data[logicalY, logicalX];
+                                    if (value != 0)
+                                    {
+                                        if (!brushCache.ContainsKey(value))
+                                        {
+                                            Color color = GetColorForByteValue(value, layerBaseColor);
+                                            brushCache[value] = new SolidBrush(Color.FromArgb(alphaValue, color));
+                                        }
+
+                                        int screenX = dirtyBitmapPoint.X + brushX * Context.CellSize;
+                                        int screenY = dirtyBitmapPoint.Y + brushY * Context.CellSize;
+                                        g.FillRectangle(brushCache[value], screenX, screenY, Context.CellSize, Context.CellSize);
+                                    }
                                 }
                             }
                         }
@@ -230,11 +289,11 @@ namespace MapTool {
                 }
                 finally
                 {
-                    foreach (var brush in brushes.Values)
+                    foreach (var brush in brushCache.Values)
                     {
                         brush.Dispose();
                     }
-                    brushes.Clear();
+                    brushCache.Clear();
                 }
             }
         }
@@ -243,7 +302,7 @@ namespace MapTool {
             return cachedBitmap;
         }
 
-        private Color GetColorForLayer(string layerName) {
+        public Color GetColorForLayer(string layerName) {
             int hash = layerName.GetHashCode();
             return Color.FromArgb(Math.Abs(hash) % 256, Math.Abs(hash >> 8) % 256, Math.Abs(hash >> 16) % 256);
         }

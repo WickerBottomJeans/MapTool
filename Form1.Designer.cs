@@ -26,6 +26,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnLoadFile = new System.Windows.Forms.Button();
+            this.btnLoadFolder = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.btnFLP = new System.Windows.Forms.FlowLayoutPanel();
             this.btnUp = new System.Windows.Forms.Button();
@@ -45,6 +46,7 @@
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
             this.btnReloadBitmap = new System.Windows.Forms.Button();
             this.btnXOR = new System.Windows.Forms.Button();
+            this.btnSelectRegion = new System.Windows.Forms.Button();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.btnZoomIn = new System.Windows.Forms.Button();
@@ -55,8 +57,8 @@
             this.panelMap = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.btnLoadFolder = new System.Windows.Forms.Button();
-            this.btnSelectRegion = new System.Windows.Forms.Button();
+            this.panelLegend = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel6 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
@@ -70,12 +72,13 @@
             // flowLayoutPanel1
             // 
             this.flowLayoutPanel1.AutoSize = true;
-            this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.AntiqueWhite;
             this.flowLayoutPanel1.Controls.Add(this.btnLoadFile);
             this.flowLayoutPanel1.Controls.Add(this.btnLoadFolder);
             this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel1);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
+            this.flowLayoutPanel1.Controls.Add(this.panelLegend);
+            this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel6);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
@@ -93,6 +96,17 @@
             this.btnLoadFile.Text = "Load file";
             this.btnLoadFile.UseVisualStyleBackColor = true;
             this.btnLoadFile.Click += new System.EventHandler(this.btnLoadFile_Click);
+            // 
+            // btnLoadFolder
+            // 
+            this.btnLoadFolder.AutoSize = true;
+            this.btnLoadFolder.Location = new System.Drawing.Point(3, 39);
+            this.btnLoadFolder.Name = "btnLoadFolder";
+            this.btnLoadFolder.Size = new System.Drawing.Size(299, 30);
+            this.btnLoadFolder.TabIndex = 6;
+            this.btnLoadFolder.Text = "Load folder";
+            this.btnLoadFolder.UseVisualStyleBackColor = true;
+            this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
             // 
             // tableLayoutPanel1
             // 
@@ -349,6 +363,22 @@
             this.btnXOR.UseVisualStyleBackColor = true;
             this.btnXOR.Click += new System.EventHandler(this.btnXOR_Click);
             // 
+            // btnSelectRegion
+            // 
+            this.btnSelectRegion.AutoSize = true;
+            this.btnSelectRegion.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnSelectRegion.Image = ((System.Drawing.Image)(resources.GetObject("btnSelectRegion.Image")));
+            this.btnSelectRegion.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
+            this.btnSelectRegion.Location = new System.Drawing.Point(155, 145);
+            this.btnSelectRegion.Name = "btnSelectRegion";
+            this.btnSelectRegion.Size = new System.Drawing.Size(138, 70);
+            this.btnSelectRegion.TabIndex = 10;
+            this.btnSelectRegion.Text = "Select";
+            this.btnSelectRegion.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnSelectRegion.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
+            this.btnSelectRegion.UseVisualStyleBackColor = true;
+            this.btnSelectRegion.Click += new System.EventHandler(this.btnSelectRegion_Click);
+            // 
             // flowLayoutPanel3
             // 
             this.flowLayoutPanel3.AutoSize = true;
@@ -470,32 +500,21 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
-            // btnLoadFolder
+            // panelLegend
             // 
-            this.btnLoadFolder.AutoSize = true;
-            this.btnLoadFolder.Location = new System.Drawing.Point(3, 39);
-            this.btnLoadFolder.Name = "btnLoadFolder";
-            this.btnLoadFolder.Size = new System.Drawing.Size(299, 30);
-            this.btnLoadFolder.TabIndex = 6;
-            this.btnLoadFolder.Text = "Load folder";
-            this.btnLoadFolder.UseVisualStyleBackColor = true;
-            this.btnLoadFolder.Click += new System.EventHandler(this.btnLoadFolder_Click);
+            this.panelLegend.AutoScroll = true;
+            this.panelLegend.BackColor = System.Drawing.Color.Sienna;
+            this.panelLegend.Location = new System.Drawing.Point(3, 689);
+            this.panelLegend.Name = "panelLegend";
+            this.panelLegend.Size = new System.Drawing.Size(296, 100);
+            this.panelLegend.TabIndex = 7;
             // 
-            // btnSelectRegion
+            // flowLayoutPanel6
             // 
-            this.btnSelectRegion.AutoSize = true;
-            this.btnSelectRegion.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnSelectRegion.Image = ((System.Drawing.Image)(resources.GetObject("btnSelectRegion.Image")));
-            this.btnSelectRegion.ImageAlign = System.Drawing.ContentAlignment.TopCenter;
-            this.btnSelectRegion.Location = new System.Drawing.Point(155, 145);
-            this.btnSelectRegion.Name = "btnSelectRegion";
-            this.btnSelectRegion.Size = new System.Drawing.Size(138, 70);
-            this.btnSelectRegion.TabIndex = 10;
-            this.btnSelectRegion.Text = "Select";
-            this.btnSelectRegion.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
-            this.btnSelectRegion.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageAboveText;
-            this.btnSelectRegion.UseVisualStyleBackColor = true;
-            this.btnSelectRegion.Click += new System.EventHandler(this.btnSelectRegion_Click);
+            this.flowLayoutPanel6.Location = new System.Drawing.Point(308, 3);
+            this.flowLayoutPanel6.Name = "flowLayoutPanel6";
+            this.flowLayoutPanel6.Size = new System.Drawing.Size(200, 100);
+            this.flowLayoutPanel6.TabIndex = 8;
             // 
             // mainForm
             // 
@@ -562,6 +581,8 @@
         private System.Windows.Forms.Button btnXOR;
         private System.Windows.Forms.Button btnLoadFolder;
         private System.Windows.Forms.Button btnSelectRegion;
+        private System.Windows.Forms.Panel panelLegend;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel6;
     }
 }
 

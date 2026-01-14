@@ -159,6 +159,58 @@ namespace MapTool {
             }
         }
 
+        private void UpdateByteLegend()
+        {
+            panelLegend.Controls.Clear();
+
+            if (sharedContext.CurrentLayer == null) return;
+
+            // Find all unique byte values in current layer
+            HashSet<byte> uniqueValues = new HashSet<byte>();
+            for (int y = 0; y < sharedContext.CurrentLayer.Data.GetLength(0); y++)
+            {
+                for (int x = 0; x < sharedContext.CurrentLayer.Data.GetLength(1); x++)
+                {
+                    byte value = sharedContext.CurrentLayer.Data[y, x];
+                    if (value != 0)
+                    {
+                        uniqueValues.Add(value);
+                    }
+                }
+            }
+
+            // Create legend entries
+            var sortedValues = uniqueValues.OrderBy(v => v).ToList();
+            Color layerColor = mapRenderer.GetColorForLayer(sharedContext.CurrentLayer.Name);
+
+            int yOffset = 5;
+            foreach (byte value in sortedValues)
+            {
+                Panel colorBox = new Panel
+                {
+                    Width = 30,
+                    Height = 20,
+                    Left = 5,
+                    Top = yOffset,
+                    BackColor = mapRenderer.GetColorForByteValue(value, layerColor),
+                    BorderStyle = BorderStyle.FixedSingle
+                };
+
+                Label label = new Label
+                {
+                    Text = $"Value: {value}",
+                    Left = 40,
+                    Top = yOffset + 2,
+                    AutoSize = true
+                };
+
+                panelLegend.Controls.Add(colorBox);
+                panelLegend.Controls.Add(label);
+
+                yOffset += 25;
+            }
+        }
+
         private List<MapLayer> GetVisibleLayers() {
             var visibleLayers = new List<MapLayer>();
             foreach (var item in clbLayers.CheckedItems) {
@@ -172,6 +224,7 @@ namespace MapTool {
         private void UpdatePanelMap() {
             var layerToDraw = GetVisibleLayers();
             mapRenderer.RenderLayers(layerToDraw);
+            UpdateByteLegend();
         }
 
         private void btnRemoveLayer_Click(object sender, EventArgs e) {
@@ -360,6 +413,7 @@ namespace MapTool {
                 isDrawing = false;
                 mapEditor.DrawAt(coorConverter.ScreenToLogical(e.Location));
                 mapRenderer.RenderPreviewAt(coorConverter.ScreenToBitmap(e.Location));
+                UpdateByteLegend();
                 UpdatePanelMap();
             }
             if (isDrawingLine) {
@@ -450,7 +504,7 @@ namespace MapTool {
             clbLayers.SelectedIndex = index2;
 
             clbLayers_SelectedIndexChanged(clbLayers, EventArgs.Empty);
-
+            UpdateByteLegend();
             UpdatePanelMap();
         }
 
