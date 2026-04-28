@@ -54,11 +54,12 @@
             this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
             this.nudBrushSize = new System.Windows.Forms.NumericUpDown();
+            this.panelLegend = new System.Windows.Forms.Panel();
+            this.flowLayoutPanel6 = new System.Windows.Forms.FlowLayoutPanel();
             this.panelMap = new System.Windows.Forms.Panel();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.panelLegend = new System.Windows.Forms.Panel();
-            this.flowLayoutPanel6 = new System.Windows.Forms.FlowLayoutPanel();
+            this.BtnLoadJSONEntity = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.btnFLP.SuspendLayout();
@@ -75,6 +76,7 @@
             this.flowLayoutPanel1.BackColor = System.Drawing.Color.AntiqueWhite;
             this.flowLayoutPanel1.Controls.Add(this.btnLoadFile);
             this.flowLayoutPanel1.Controls.Add(this.btnLoadFolder);
+            this.flowLayoutPanel1.Controls.Add(this.BtnLoadJSONEntity);
             this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel1);
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel1.Controls.Add(this.panelLegend);
@@ -115,7 +117,7 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.btnFLP, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.clbLayers, 0, 0);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 75);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 111);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -236,7 +238,7 @@
             this.flowLayoutPanel2.Controls.Add(this.btnSelectRegion);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel3);
             this.flowLayoutPanel2.Controls.Add(this.flowLayoutPanel5);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 365);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 401);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(296, 318);
             this.flowLayoutPanel2.TabIndex = 3;
@@ -388,7 +390,7 @@
             this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 221);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 46);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(178, 46);
             this.flowLayoutPanel3.TabIndex = 6;
             // 
             // label1
@@ -396,9 +398,9 @@
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(8, 13);
+            this.label1.Location = new System.Drawing.Point(8, 16);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(54, 20);
+            this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Zoom";
             this.label1.Click += new System.EventHandler(this.label1_Click);
@@ -407,7 +409,7 @@
             // 
             this.btnZoomIn.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnZoomIn.AutoSize = true;
-            this.btnZoomIn.Location = new System.Drawing.Point(68, 8);
+            this.btnZoomIn.Location = new System.Drawing.Point(52, 8);
             this.btnZoomIn.Name = "btnZoomIn";
             this.btnZoomIn.Size = new System.Drawing.Size(56, 30);
             this.btnZoomIn.TabIndex = 1;
@@ -419,7 +421,7 @@
             // 
             this.btnZoomOut.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnZoomOut.AutoSize = true;
-            this.btnZoomOut.Location = new System.Drawing.Point(130, 8);
+            this.btnZoomOut.Location = new System.Drawing.Point(114, 8);
             this.btnZoomOut.Name = "btnZoomOut";
             this.btnZoomOut.Size = new System.Drawing.Size(56, 30);
             this.btnZoomOut.TabIndex = 2;
@@ -435,7 +437,7 @@
             this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 273);
             this.flowLayoutPanel5.Name = "flowLayoutPanel5";
             this.flowLayoutPanel5.Padding = new System.Windows.Forms.Padding(5);
-            this.flowLayoutPanel5.Size = new System.Drawing.Size(175, 42);
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(139, 42);
             this.flowLayoutPanel5.TabIndex = 7;
             // 
             // label2
@@ -443,18 +445,18 @@
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(8, 11);
+            this.label2.Location = new System.Drawing.Point(8, 14);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 20);
+            this.label2.Size = new System.Drawing.Size(65, 13);
             this.label2.TabIndex = 0;
             this.label2.Text = "Brush size";
             // 
             // nudBrushSize
             // 
             this.nudBrushSize.AutoSize = true;
-            this.nudBrushSize.Location = new System.Drawing.Point(107, 8);
+            this.nudBrushSize.Location = new System.Drawing.Point(79, 8);
             this.nudBrushSize.Name = "nudBrushSize";
-            this.nudBrushSize.Size = new System.Drawing.Size(60, 26);
+            this.nudBrushSize.Size = new System.Drawing.Size(52, 26);
             this.nudBrushSize.TabIndex = 2;
             this.nudBrushSize.Value = new decimal(new int[] {
             1,
@@ -462,6 +464,22 @@
             0,
             0});
             this.nudBrushSize.ValueChanged += new System.EventHandler(this.nudBrushSize_ValueChanged);
+            // 
+            // panelLegend
+            // 
+            this.panelLegend.AutoScroll = true;
+            this.panelLegend.BackColor = System.Drawing.Color.Sienna;
+            this.panelLegend.Location = new System.Drawing.Point(3, 725);
+            this.panelLegend.Name = "panelLegend";
+            this.panelLegend.Size = new System.Drawing.Size(296, 100);
+            this.panelLegend.TabIndex = 7;
+            // 
+            // flowLayoutPanel6
+            // 
+            this.flowLayoutPanel6.Location = new System.Drawing.Point(308, 3);
+            this.flowLayoutPanel6.Name = "flowLayoutPanel6";
+            this.flowLayoutPanel6.Size = new System.Drawing.Size(200, 100);
+            this.flowLayoutPanel6.TabIndex = 8;
             // 
             // panelMap
             // 
@@ -500,21 +518,16 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(1343, 844);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
-            // panelLegend
+            // BtnLoadJSONEntity
             // 
-            this.panelLegend.AutoScroll = true;
-            this.panelLegend.BackColor = System.Drawing.Color.Sienna;
-            this.panelLegend.Location = new System.Drawing.Point(3, 689);
-            this.panelLegend.Name = "panelLegend";
-            this.panelLegend.Size = new System.Drawing.Size(296, 100);
-            this.panelLegend.TabIndex = 7;
-            // 
-            // flowLayoutPanel6
-            // 
-            this.flowLayoutPanel6.Location = new System.Drawing.Point(308, 3);
-            this.flowLayoutPanel6.Name = "flowLayoutPanel6";
-            this.flowLayoutPanel6.Size = new System.Drawing.Size(200, 100);
-            this.flowLayoutPanel6.TabIndex = 8;
+            this.BtnLoadJSONEntity.AutoSize = true;
+            this.BtnLoadJSONEntity.Location = new System.Drawing.Point(3, 75);
+            this.BtnLoadJSONEntity.Name = "BtnLoadJSONEntity";
+            this.BtnLoadJSONEntity.Size = new System.Drawing.Size(299, 30);
+            this.BtnLoadJSONEntity.TabIndex = 9;
+            this.BtnLoadJSONEntity.Text = "Load entity";
+            this.BtnLoadJSONEntity.UseVisualStyleBackColor = true;
+            this.BtnLoadJSONEntity.Click += new System.EventHandler(this.btnLoadJSONEntity_Click);
             // 
             // mainForm
             // 
@@ -583,6 +596,7 @@
         private System.Windows.Forms.Button btnSelectRegion;
         private System.Windows.Forms.Panel panelLegend;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel6;
+        private System.Windows.Forms.Button BtnLoadJSONEntity;
     }
 }
 
